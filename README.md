@@ -49,4 +49,4 @@ npm run verify
 
 ## Next Recommended Task
 
-Load the generated WebExtension in Safari's extension tooling, verify document-start page injection on current Safari, and document the exact converter or packaging command in `docs/safari-packaging.md` after testing with current Xcode.
+Run the manual Safari QA pass against real ChatGPT pages: normal conversations, shared conversations, long text threads, long code-block threads, popup setting changes, restore-full-thread, disable/reload behavior, and the domain permission prompt. Record the exact Safari/macOS results in `docs/qa-protocol.md` and update the App Review packet if any reviewer-facing behavior changes.

@@ -3,6 +3,7 @@
 Local tool check on this Mac:
 
 - Xcode: `Xcode 26.6`, build `17F113`
+- Safari: `26.5`, build `21624.2.5.11.4`
 - `xcrun safari-web-extension-converter --help` prints the current `safari-web-extension-packager` usage text.
 
 ## Build The Extension
@@ -26,7 +27,7 @@ Production builds are minified and do not include source maps. Use `npm run buil
 
 ## Generate The Native Project
 
-Preferred local command, based on the installed converter help:
+Preferred local command, tested with Xcode 26.6:
 
 ```bash
 xcrun safari-web-extension-converter ./extension \
@@ -38,6 +39,26 @@ xcrun safari-web-extension-converter ./extension \
   --no-open \
   --no-prompt
 ```
+
+The same command was smoke-tested without touching the checked-in native project by changing only the output path and forcing the throwaway destination:
+
+```bash
+xcrun safari-web-extension-converter ./extension \
+  --project-location /private/tmp/threadlight-converter-check-20260630-1606 \
+  --app-name ThreadLight \
+  --bundle-identifier com.jeremiahgassensmith.threadlight \
+  --swift \
+  --copy-resources \
+  --no-open \
+  --no-prompt \
+  --force
+```
+
+Current converter output:
+
+- Generated a Swift Xcode project successfully.
+- Reported `Platform: All`.
+- Warned that manifest key `world` is not supported by the current Safari. ThreadLight still uses the `document_start` `page-inject.js` script-tag path to put `page-proxy.js` into the page world.
 
 The converter describes itself as packaging a Web Extension into an app that can be built and run in Safari and distributed through the App Store. It generates an Xcode project based on `manifest.json`.
 
@@ -89,12 +110,46 @@ resource fork, Finder information, or similar detritus not allowed
 Current local result:
 
 - `ThreadLight (macOS)` builds and launches locally.
+- The Debug app at `/private/tmp/threadlight-derived/Build/Products/Debug/ThreadLight.app` registers `com.jeremiahgassensmith.threadlight.Extension(0.1.5)` with PlugInKit/Safari extension tooling.
 - The release app builds with `Developer ID Application: JEREMIAH JOSEPH GASSENSMITH (C2N7W5247T)`.
 - `codesign --verify --deep --strict --verbose=4` passes for the release app when run with keychain access.
-- `spctl --assess --type execute --verbose=4` rejects the release app only because it is still unnotarized.
-- Attempting to create the `threadlight-notary` notarytool keychain profile currently fails with Apple's `A required agreement is missing or has expired` response. The account owner needs to accept the pending Apple Developer/App Store Connect agreement before notarization can be submitted.
+- The `threadlight-notary` keychain profile is available.
+- A signed DMG at `/private/tmp/ThreadLight-0.1.5.dmg` was accepted by Apple notarization, stapled, validated, and accepted by Gatekeeper as `Notarized Developer ID` on 2026-06-30.
 
 Xcode also reports a CoreSimulator version mismatch. That does not block the macOS build, but iOS Simulator testing should wait until the local CoreSimulator/Xcode install is repaired.
+
+## Safari Document-Start Verification
+
+Verified on Safari `26.5` after running:
+
+```bash
+npm run build:safari
+./script/build_and_run.sh --verify
+```
+
+Generated resource parity was checked with `cmp` for:
+
+- `extension/dist/background.js`
+- `extension/dist/content.js`
+- `extension/dist/page-inject.js`
+- `extension/dist/page-proxy.js`
+- `extension/dist/popup.js`
+- `extension/manifest.json`
+
+Safari loaded the generated extension through the native app container. A live `https://chatgpt.com/` tab reported:
+
+```json
+{
+  "url": "https://chatgpt.com/",
+  "readyState": "complete",
+  "pageInjectMarker": "true",
+  "fetchPatched": true,
+  "historyPatched": true,
+  "scriptMarkerCount": 0
+}
+```
+
+The `pageInjectMarker` comes from `extension/src/content/page-inject.ts`, which is declared in the generated manifest with `run_at: "document_start"`. `fetchPatched` and `historyPatched` come from the page-world proxy. `scriptMarkerCount` is expected to be `0` because `page-inject.ts` removes its temporary `script[data-threadlight="page-proxy"]` element immediately after insertion.
 
 ## Manual Safari Test Steps
 
