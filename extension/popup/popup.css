@@ -1,0 +1,108 @@
+:root {
+  color-scheme: light dark;
+  --bg: Canvas;
+  --surface: color-mix(in srgb, Canvas 92%, CanvasText 8%);
+  --text: CanvasText;
+  --muted: color-mix(in srgb, CanvasText 68%, Canvas 32%);
+  --border: color-mix(in srgb, CanvasText 18%, Canvas 82%);
+  --accent: #2f6fed;
+  --accent-text: #ffffff;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  width: 320px;
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+}
+
+.popup-shell {
+  padding: 16px;
+}
+
+.popup-header {
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+}
+
+h1 {
+  margin: 0 0 4px;
+  font-size: 18px;
+  line-height: 1.2;
+}
+
+p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.settings-form {
+  display: grid;
+  gap: 14px;
+  padding: 16px 0;
+}
+
+.switch-row,
+.range-row {
+  display: grid;
+  gap: 8px;
+  font-size: 14px;
+  line-height: 1.3;
+}
+
+.switch-row {
+  grid-template-columns: 1fr auto;
+  align-items: center;
+}
+
+input[type="checkbox"] {
+  width: 38px;
+  height: 22px;
+  accent-color: var(--accent);
+}
+
+input[type="range"] {
+  width: 100%;
+  accent-color: var(--accent);
+}
+
+button {
+  width: 100%;
+  min-height: 36px;
+  border: 0;
+  border-radius: 8px;
+  background: var(--accent);
+  color: var(--accent-text);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--accent) 65%, transparent);
+  outline-offset: 2px;
+}
+
+.popup-footer {
+  display: grid;
+  gap: 6px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+.popup-footer a {
+  color: var(--accent);
+  text-decoration: none;
+}

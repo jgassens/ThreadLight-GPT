@@ -1,0 +1,1005 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		A84EEB712FF359F200CB23B0 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A84EEB702FF359F200CB23B0 /* AppDelegate.swift */; };
+		A84EEB732FF359F200CB23B0 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A84EEB722FF359F200CB23B0 /* SceneDelegate.swift */; };
+		A84EEB762FF359F200CB23B0 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A84EEB742FF359F200CB23B0 /* LaunchScreen.storyboard */; };
+		A84EEB792FF359F200CB23B0 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A84EEB772FF359F200CB23B0 /* Main.storyboard */; };
+		A84EEB822FF359F200CB23B0 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A84EEB812FF359F200CB23B0 /* AppDelegate.swift */; };
+		A84EEB852FF359F200CB23B0 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A84EEB832FF359F200CB23B0 /* Main.storyboard */; };
+		A84EEB8C2FF359F200CB23B0 /* ThreadLight Extension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = A84EEB8B2FF359F200CB23B0 /* ThreadLight Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		A84EEB962FF359F200CB23B0 /* ThreadLight Extension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = A84EEB952FF359F200CB23B0 /* ThreadLight Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		A84EEB9B2FF359F200CB23B0 /* Main.html in Resources */ = {isa = PBXBuildFile; fileRef = A84EEB602FF359F100CB23B0 /* Main.html */; };
+		A84EEB9C2FF359F200CB23B0 /* Main.html in Resources */ = {isa = PBXBuildFile; fileRef = A84EEB602FF359F100CB23B0 /* Main.html */; };
+		A84EEB9D2FF359F200CB23B0 /* Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = A84EEB622FF359F100CB23B0 /* Icon.png */; };
+		A84EEB9E2FF359F200CB23B0 /* Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = A84EEB622FF359F100CB23B0 /* Icon.png */; };
+		A84EEB9F2FF359F200CB23B0 /* Style.css in Resources */ = {isa = PBXBuildFile; fileRef = A84EEB632FF359F100CB23B0 /* Style.css */; };
+		A84EEBA02FF359F200CB23B0 /* Style.css in Resources */ = {isa = PBXBuildFile; fileRef = A84EEB632FF359F100CB23B0 /* Style.css */; };
+		A84EEBA12FF359F200CB23B0 /* Script.js in Resources */ = {isa = PBXBuildFile; fileRef = A84EEB642FF359F100CB23B0 /* Script.js */; };
+		A84EEBA22FF359F200CB23B0 /* Script.js in Resources */ = {isa = PBXBuildFile; fileRef = A84EEB642FF359F100CB23B0 /* Script.js */; };
+		A84EEBA32FF359F200CB23B0 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A84EEB652FF359F100CB23B0 /* ViewController.swift */; };
+		A84EEBA42FF359F200CB23B0 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A84EEB652FF359F100CB23B0 /* ViewController.swift */; };
+		A84EEBA52FF359F200CB23B0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A84EEB662FF359F200CB23B0 /* Assets.xcassets */; };
+		A84EEBA62FF359F200CB23B0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A84EEB662FF359F200CB23B0 /* Assets.xcassets */; };
+		A84EEBA72FF359F200CB23B0 /* SafariWebExtensionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = A84EEB682FF359F200CB23B0 /* SafariWebExtensionHandler.swift */; };
+		A84EEBA82FF359F200CB23B0 /* SafariWebExtensionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = A84EEB682FF359F200CB23B0 /* SafariWebExtensionHandler.swift */; };
+		A84EEBC02FF359F200CB23B0 /* manifest.safari.json in Resources */ = {isa = PBXBuildFile; fileRef = A84EEBBA2FF359F200CB23B0 /* manifest.safari.json */; };
+		A84EEBC12FF359F200CB23B0 /* popup in Resources */ = {isa = PBXBuildFile; fileRef = A84EEBBB2FF359F200CB23B0 /* popup */; };
+		A84EEBC22FF359F200CB23B0 /* dist in Resources */ = {isa = PBXBuildFile; fileRef = A84EEBBC2FF359F200CB23B0 /* dist */; };
+		A84EEBC32FF359F200CB23B0 /* icons in Resources */ = {isa = PBXBuildFile; fileRef = A84EEBBD2FF359F200CB23B0 /* icons */; };
+		A84EEBC42FF359F200CB23B0 /* manifest.json in Resources */ = {isa = PBXBuildFile; fileRef = A84EEBBE2FF359F200CB23B0 /* manifest.json */; };
+		A84EEBC52FF359F200CB23B0 /* src in Resources */ = {isa = PBXBuildFile; fileRef = A84EEBBF2FF359F200CB23B0 /* src */; };
+		A84EEBC62FF359F200CB23B0 /* manifest.safari.json in Resources */ = {isa = PBXBuildFile; fileRef = A84EEBBA2FF359F200CB23B0 /* manifest.safari.json */; };
+		A84EEBC72FF359F200CB23B0 /* popup in Resources */ = {isa = PBXBuildFile; fileRef = A84EEBBB2FF359F200CB23B0 /* popup */; };
+		A84EEBC82FF359F200CB23B0 /* dist in Resources */ = {isa = PBXBuildFile; fileRef = A84EEBBC2FF359F200CB23B0 /* dist */; };
+		A84EEBC92FF359F200CB23B0 /* icons in Resources */ = {isa = PBXBuildFile; fileRef = A84EEBBD2FF359F200CB23B0 /* icons */; };
+		A84EEBCA2FF359F200CB23B0 /* manifest.json in Resources */ = {isa = PBXBuildFile; fileRef = A84EEBBE2FF359F200CB23B0 /* manifest.json */; };
+		A84EEBCB2FF359F200CB23B0 /* src in Resources */ = {isa = PBXBuildFile; fileRef = A84EEBBF2FF359F200CB23B0 /* src */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		A84EEB8D2FF359F200CB23B0 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A84EEB5A2FF359F100CB23B0 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = A84EEB8A2FF359F200CB23B0;
+			remoteInfo = "ThreadLight Extension (iOS)";
+		};
+		A84EEB972FF359F200CB23B0 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A84EEB5A2FF359F100CB23B0 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = A84EEB942FF359F200CB23B0;
+			remoteInfo = "ThreadLight Extension (macOS)";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		A84EEBAE2FF359F200CB23B0 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				A84EEB8C2FF359F200CB23B0 /* ThreadLight Extension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A84EEBB52FF359F200CB23B0 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				A84EEB962FF359F200CB23B0 /* ThreadLight Extension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		A84EEB612FF359F100CB23B0 /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.html; name = Base; path = Base.lproj/Main.html; sourceTree = "<group>"; };
+		A84EEB622FF359F100CB23B0 /* Icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Icon.png; sourceTree = "<group>"; };
+		A84EEB632FF359F100CB23B0 /* Style.css */ = {isa = PBXFileReference; lastKnownFileType = text.css; path = Style.css; sourceTree = "<group>"; };
+		A84EEB642FF359F100CB23B0 /* Script.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = Script.js; sourceTree = "<group>"; };
+		A84EEB652FF359F100CB23B0 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		A84EEB662FF359F200CB23B0 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		A84EEB682FF359F200CB23B0 /* SafariWebExtensionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafariWebExtensionHandler.swift; sourceTree = "<group>"; };
+		A84EEB6D2FF359F200CB23B0 /* ThreadLight.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ThreadLight.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A84EEB702FF359F200CB23B0 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		A84EEB722FF359F200CB23B0 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
+		A84EEB752FF359F200CB23B0 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		A84EEB782FF359F200CB23B0 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		A84EEB7A2FF359F200CB23B0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		A84EEB7F2FF359F200CB23B0 /* ThreadLight.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ThreadLight.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A84EEB812FF359F200CB23B0 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		A84EEB842FF359F200CB23B0 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		A84EEB862FF359F200CB23B0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		A84EEB872FF359F100CB23B1 /* ThreadLight.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ThreadLight.entitlements; sourceTree = "<group>"; };
+		A84EEB8B2FF359F200CB23B0 /* ThreadLight Extension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "ThreadLight Extension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
+		A84EEB902FF359F200CB23B0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		A84EEB952FF359F200CB23B0 /* ThreadLight Extension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "ThreadLight Extension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
+		A84EEB9A2FF359F200CB23B0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		A84EEBA92FF359F100CB23B1 /* ThreadLight Extension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "ThreadLight Extension.entitlements"; sourceTree = "<group>"; };
+		A84EEBBA2FF359F200CB23B0 /* manifest.safari.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; name = manifest.safari.json; path = Resources/manifest.safari.json; sourceTree = "<group>"; };
+		A84EEBBB2FF359F200CB23B0 /* popup */ = {isa = PBXFileReference; lastKnownFileType = folder; name = popup; path = Resources/popup; sourceTree = "<group>"; };
+		A84EEBBC2FF359F200CB23B0 /* dist */ = {isa = PBXFileReference; lastKnownFileType = folder; name = dist; path = Resources/dist; sourceTree = "<group>"; };
+		A84EEBBD2FF359F200CB23B0 /* icons */ = {isa = PBXFileReference; lastKnownFileType = folder; name = icons; path = Resources/icons; sourceTree = "<group>"; };
+		A84EEBBE2FF359F200CB23B0 /* manifest.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; name = manifest.json; path = Resources/manifest.json; sourceTree = "<group>"; };
+		A84EEBBF2FF359F200CB23B0 /* src */ = {isa = PBXFileReference; lastKnownFileType = folder; name = src; path = Resources/src; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		A84EEB6A2FF359F200CB23B0 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A84EEB7C2FF359F200CB23B0 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A84EEB882FF359F200CB23B0 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A84EEB922FF359F200CB23B0 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		A84EEB592FF359F100CB23B0 = {
+			isa = PBXGroup;
+			children = (
+				A84EEB5E2FF359F100CB23B0 /* Shared (App) */,
+				A84EEB672FF359F200CB23B0 /* Shared (Extension) */,
+				A84EEB6F2FF359F200CB23B0 /* iOS (App) */,
+				A84EEB802FF359F200CB23B0 /* macOS (App) */,
+				A84EEB8F2FF359F200CB23B0 /* iOS (Extension) */,
+				A84EEB992FF359F200CB23B0 /* macOS (Extension) */,
+				A84EEB6E2FF359F200CB23B0 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		A84EEB5E2FF359F100CB23B0 /* Shared (App) */ = {
+			isa = PBXGroup;
+			children = (
+				A84EEB652FF359F100CB23B0 /* ViewController.swift */,
+				A84EEB662FF359F200CB23B0 /* Assets.xcassets */,
+				A84EEB5F2FF359F100CB23B0 /* Resources */,
+			);
+			path = "Shared (App)";
+			sourceTree = "<group>";
+		};
+		A84EEB5F2FF359F100CB23B0 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				A84EEB602FF359F100CB23B0 /* Main.html */,
+				A84EEB622FF359F100CB23B0 /* Icon.png */,
+				A84EEB632FF359F100CB23B0 /* Style.css */,
+				A84EEB642FF359F100CB23B0 /* Script.js */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		A84EEB672FF359F200CB23B0 /* Shared (Extension) */ = {
+			isa = PBXGroup;
+			children = (
+				A84EEBB92FF359F200CB23B0 /* Resources */,
+				A84EEB682FF359F200CB23B0 /* SafariWebExtensionHandler.swift */,
+			);
+			path = "Shared (Extension)";
+			sourceTree = "<group>";
+		};
+		A84EEB6E2FF359F200CB23B0 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				A84EEB6D2FF359F200CB23B0 /* ThreadLight.app */,
+				A84EEB7F2FF359F200CB23B0 /* ThreadLight.app */,
+				A84EEB8B2FF359F200CB23B0 /* ThreadLight Extension.appex */,
+				A84EEB952FF359F200CB23B0 /* ThreadLight Extension.appex */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		A84EEB6F2FF359F200CB23B0 /* iOS (App) */ = {
+			isa = PBXGroup;
+			children = (
+				A84EEB702FF359F200CB23B0 /* AppDelegate.swift */,
+				A84EEB722FF359F200CB23B0 /* SceneDelegate.swift */,
+				A84EEB742FF359F200CB23B0 /* LaunchScreen.storyboard */,
+				A84EEB772FF359F200CB23B0 /* Main.storyboard */,
+				A84EEB7A2FF359F200CB23B0 /* Info.plist */,
+			);
+			path = "iOS (App)";
+			sourceTree = "<group>";
+		};
+		A84EEB802FF359F200CB23B0 /* macOS (App) */ = {
+			isa = PBXGroup;
+			children = (
+				A84EEB812FF359F200CB23B0 /* AppDelegate.swift */,
+				A84EEB832FF359F200CB23B0 /* Main.storyboard */,
+				A84EEB862FF359F200CB23B0 /* Info.plist */,
+				A84EEB872FF359F100CB23B1 /* ThreadLight.entitlements */,
+			);
+			path = "macOS (App)";
+			sourceTree = "<group>";
+		};
+		A84EEB8F2FF359F200CB23B0 /* iOS (Extension) */ = {
+			isa = PBXGroup;
+			children = (
+				A84EEB902FF359F200CB23B0 /* Info.plist */,
+			);
+			path = "iOS (Extension)";
+			sourceTree = "<group>";
+		};
+		A84EEB992FF359F200CB23B0 /* macOS (Extension) */ = {
+			isa = PBXGroup;
+			children = (
+				A84EEB9A2FF359F200CB23B0 /* Info.plist */,
+				A84EEBA92FF359F100CB23B1 /* ThreadLight Extension.entitlements */,
+			);
+			path = "macOS (Extension)";
+			sourceTree = "<group>";
+		};
+		A84EEBB92FF359F200CB23B0 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				A84EEBBA2FF359F200CB23B0 /* manifest.safari.json */,
+				A84EEBBB2FF359F200CB23B0 /* popup */,
+				A84EEBBC2FF359F200CB23B0 /* dist */,
+				A84EEBBD2FF359F200CB23B0 /* icons */,
+				A84EEBBE2FF359F200CB23B0 /* manifest.json */,
+				A84EEBBF2FF359F200CB23B0 /* src */,
+			);
+			name = Resources;
+			path = "Shared (Extension)";
+			sourceTree = SOURCE_ROOT;
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		A84EEB6C2FF359F200CB23B0 /* ThreadLight (iOS) */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A84EEBAF2FF359F200CB23B0 /* Build configuration list for PBXNativeTarget "ThreadLight (iOS)" */;
+			buildPhases = (
+				A84EEB692FF359F200CB23B0 /* Sources */,
+				A84EEB6A2FF359F200CB23B0 /* Frameworks */,
+				A84EEB6B2FF359F200CB23B0 /* Resources */,
+				A84EEBAE2FF359F200CB23B0 /* Embed Foundation Extensions */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				A84EEB8E2FF359F200CB23B0 /* PBXTargetDependency */,
+			);
+			name = "ThreadLight (iOS)";
+			packageProductDependencies = (
+			);
+			productName = "ThreadLight (iOS)";
+			productReference = A84EEB6D2FF359F200CB23B0 /* ThreadLight.app */;
+			productType = "com.apple.product-type.application";
+		};
+		A84EEB7E2FF359F200CB23B0 /* ThreadLight (macOS) */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A84EEBB62FF359F200CB23B0 /* Build configuration list for PBXNativeTarget "ThreadLight (macOS)" */;
+			buildPhases = (
+				A84EEB7B2FF359F200CB23B0 /* Sources */,
+				A84EEB7C2FF359F200CB23B0 /* Frameworks */,
+				A84EEB7D2FF359F200CB23B0 /* Resources */,
+				A84EEBB52FF359F200CB23B0 /* Embed Foundation Extensions */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				A84EEB982FF359F200CB23B0 /* PBXTargetDependency */,
+			);
+			name = "ThreadLight (macOS)";
+			packageProductDependencies = (
+			);
+			productName = "ThreadLight (macOS)";
+			productReference = A84EEB7F2FF359F200CB23B0 /* ThreadLight.app */;
+			productType = "com.apple.product-type.application";
+		};
+		A84EEB8A2FF359F200CB23B0 /* ThreadLight Extension (iOS) */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A84EEBAB2FF359F200CB23B0 /* Build configuration list for PBXNativeTarget "ThreadLight Extension (iOS)" */;
+			buildPhases = (
+				A84EEB872FF359F200CB23B0 /* Sources */,
+				A84EEB882FF359F200CB23B0 /* Frameworks */,
+				A84EEB892FF359F200CB23B0 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "ThreadLight Extension (iOS)";
+			packageProductDependencies = (
+			);
+			productName = "ThreadLight Extension (iOS)";
+			productReference = A84EEB8B2FF359F200CB23B0 /* ThreadLight Extension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+		A84EEB942FF359F200CB23B0 /* ThreadLight Extension (macOS) */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A84EEBB22FF359F200CB23B0 /* Build configuration list for PBXNativeTarget "ThreadLight Extension (macOS)" */;
+			buildPhases = (
+				A84EEB912FF359F200CB23B0 /* Sources */,
+				A84EEB922FF359F200CB23B0 /* Frameworks */,
+				A84EEB932FF359F200CB23B0 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "ThreadLight Extension (macOS)";
+			packageProductDependencies = (
+			);
+			productName = "ThreadLight Extension (macOS)";
+			productReference = A84EEB952FF359F200CB23B0 /* ThreadLight Extension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		A84EEB5A2FF359F100CB23B0 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 2660;
+				LastUpgradeCheck = 2660;
+				TargetAttributes = {
+					A84EEB6C2FF359F200CB23B0 = {
+						CreatedOnToolsVersion = 26.6;
+					};
+					A84EEB7E2FF359F200CB23B0 = {
+						CreatedOnToolsVersion = 26.6;
+					};
+					A84EEB8A2FF359F200CB23B0 = {
+						CreatedOnToolsVersion = 26.6;
+					};
+					A84EEB942FF359F200CB23B0 = {
+						CreatedOnToolsVersion = 26.6;
+					};
+				};
+			};
+			buildConfigurationList = A84EEB5D2FF359F100CB23B0 /* Build configuration list for PBXProject "ThreadLight" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = A84EEB592FF359F100CB23B0;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = A84EEB6E2FF359F200CB23B0 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				A84EEB6C2FF359F200CB23B0 /* ThreadLight (iOS) */,
+				A84EEB7E2FF359F200CB23B0 /* ThreadLight (macOS) */,
+				A84EEB8A2FF359F200CB23B0 /* ThreadLight Extension (iOS) */,
+				A84EEB942FF359F200CB23B0 /* ThreadLight Extension (macOS) */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		A84EEB6B2FF359F200CB23B0 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A84EEB9D2FF359F200CB23B0 /* Icon.png in Resources */,
+				A84EEB762FF359F200CB23B0 /* LaunchScreen.storyboard in Resources */,
+				A84EEB9B2FF359F200CB23B0 /* Main.html in Resources */,
+				A84EEBA12FF359F200CB23B0 /* Script.js in Resources */,
+				A84EEBA52FF359F200CB23B0 /* Assets.xcassets in Resources */,
+				A84EEB792FF359F200CB23B0 /* Main.storyboard in Resources */,
+				A84EEB9F2FF359F200CB23B0 /* Style.css in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A84EEB7D2FF359F200CB23B0 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A84EEB9E2FF359F200CB23B0 /* Icon.png in Resources */,
+				A84EEBA02FF359F200CB23B0 /* Style.css in Resources */,
+				A84EEB852FF359F200CB23B0 /* Main.storyboard in Resources */,
+				A84EEBA22FF359F200CB23B0 /* Script.js in Resources */,
+				A84EEBA62FF359F200CB23B0 /* Assets.xcassets in Resources */,
+				A84EEB9C2FF359F200CB23B0 /* Main.html in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A84EEB892FF359F200CB23B0 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A84EEBC82FF359F200CB23B0 /* dist in Resources */,
+				A84EEBC92FF359F200CB23B0 /* icons in Resources */,
+				A84EEBCA2FF359F200CB23B0 /* manifest.json in Resources */,
+				A84EEBCB2FF359F200CB23B0 /* src in Resources */,
+				A84EEBC62FF359F200CB23B0 /* manifest.safari.json in Resources */,
+				A84EEBC72FF359F200CB23B0 /* popup in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A84EEB932FF359F200CB23B0 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A84EEBC22FF359F200CB23B0 /* dist in Resources */,
+				A84EEBC32FF359F200CB23B0 /* icons in Resources */,
+				A84EEBC42FF359F200CB23B0 /* manifest.json in Resources */,
+				A84EEBC52FF359F200CB23B0 /* src in Resources */,
+				A84EEBC02FF359F200CB23B0 /* manifest.safari.json in Resources */,
+				A84EEBC12FF359F200CB23B0 /* popup in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		A84EEB692FF359F200CB23B0 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A84EEBA32FF359F200CB23B0 /* ViewController.swift in Sources */,
+				A84EEB712FF359F200CB23B0 /* AppDelegate.swift in Sources */,
+				A84EEB732FF359F200CB23B0 /* SceneDelegate.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A84EEB7B2FF359F200CB23B0 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A84EEBA42FF359F200CB23B0 /* ViewController.swift in Sources */,
+				A84EEB822FF359F200CB23B0 /* AppDelegate.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A84EEB872FF359F200CB23B0 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A84EEBA72FF359F200CB23B0 /* SafariWebExtensionHandler.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A84EEB912FF359F200CB23B0 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A84EEBA82FF359F200CB23B0 /* SafariWebExtensionHandler.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		A84EEB8E2FF359F200CB23B0 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = A84EEB8A2FF359F200CB23B0 /* ThreadLight Extension (iOS) */;
+			targetProxy = A84EEB8D2FF359F200CB23B0 /* PBXContainerItemProxy */;
+		};
+		A84EEB982FF359F200CB23B0 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = A84EEB942FF359F200CB23B0 /* ThreadLight Extension (macOS) */;
+			targetProxy = A84EEB972FF359F200CB23B0 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		A84EEB602FF359F100CB23B0 /* Main.html */ = {
+			isa = PBXVariantGroup;
+			children = (
+				A84EEB612FF359F100CB23B0 /* Base */,
+			);
+			name = Main.html;
+			sourceTree = "<group>";
+		};
+		A84EEB742FF359F200CB23B0 /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				A84EEB752FF359F200CB23B0 /* Base */,
+			);
+			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+		A84EEB772FF359F200CB23B0 /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				A84EEB782FF359F200CB23B0 /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		A84EEB832FF359F200CB23B0 /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				A84EEB842FF359F200CB23B0 /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		A84EEBA92FF359F200CB23B0 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		A84EEBAA2FF359F200CB23B0 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SWIFT_COMPILATION_MODE = wholemodule;
+			};
+			name = Release;
+		};
+		A84EEBAC2FF359F200CB23B0 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 6;
+				DEVELOPMENT_TEAM = C2N7W5247T;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "iOS (Extension)/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "ThreadLight Extension";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 0.1.5;
+				OTHER_LDFLAGS = (
+					"-framework",
+					SafariServices,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.jeremiahgassensmith.threadlight.Extension;
+				PRODUCT_NAME = "ThreadLight Extension";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		A84EEBAD2FF359F200CB23B0 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 6;
+				DEVELOPMENT_TEAM = C2N7W5247T;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "iOS (Extension)/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "ThreadLight Extension";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 0.1.5;
+				OTHER_LDFLAGS = (
+					"-framework",
+					SafariServices,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.jeremiahgassensmith.threadlight.Extension;
+				PRODUCT_NAME = "ThreadLight Extension";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		A84EEBB02FF359F200CB23B0 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 6;
+				DEVELOPMENT_TEAM = C2N7W5247T;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "iOS (App)/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = ThreadLight;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
+				INFOPLIST_KEY_UIMainStoryboardFile = Main;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 0.1.5;
+				OTHER_LDFLAGS = (
+					"-framework",
+					SafariServices,
+					"-framework",
+					WebKit,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.jeremiahgassensmith.threadlight;
+				PRODUCT_NAME = ThreadLight;
+				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		A84EEBB12FF359F200CB23B0 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 6;
+				DEVELOPMENT_TEAM = C2N7W5247T;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "iOS (App)/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = ThreadLight;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
+				INFOPLIST_KEY_UIMainStoryboardFile = Main;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 0.1.5;
+				OTHER_LDFLAGS = (
+					"-framework",
+					SafariServices,
+					"-framework",
+					WebKit,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.jeremiahgassensmith.threadlight;
+				PRODUCT_NAME = ThreadLight;
+				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		A84EEBB32FF359F200CB23B0 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = "macOS (Extension)/ThreadLight Extension.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 6;
+				DEVELOPMENT_TEAM = C2N7W5247T;
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "macOS (Extension)/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "ThreadLight Extension";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.14;
+				MARKETING_VERSION = 0.1.5;
+				OTHER_LDFLAGS = (
+					"-framework",
+					SafariServices,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.jeremiahgassensmith.threadlight.Extension;
+				PRODUCT_NAME = "ThreadLight Extension";
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		A84EEBB42FF359F200CB23B0 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = "macOS (Extension)/ThreadLight Extension.entitlements";
+				CODE_SIGN_INJECT_BASE_ENTITLEMENTS = NO;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 6;
+				DEVELOPMENT_TEAM = C2N7W5247T;
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "macOS (Extension)/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "ThreadLight Extension";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.14;
+				MARKETING_VERSION = 0.1.5;
+				OTHER_LDFLAGS = (
+					"-framework",
+					SafariServices,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.jeremiahgassensmith.threadlight.Extension;
+				PRODUCT_NAME = "ThreadLight Extension";
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		A84EEBB72FF359F200CB23B0 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "macOS (App)/ThreadLight.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 6;
+				DEVELOPMENT_TEAM = C2N7W5247T;
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "macOS (App)/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = ThreadLight;
+				INFOPLIST_KEY_NSMainStoryboardFile = Main;
+				INFOPLIST_KEY_NSPrincipalClass = NSApplication;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.14;
+				MARKETING_VERSION = 0.1.5;
+				OTHER_LDFLAGS = (
+					"-framework",
+					SafariServices,
+					"-framework",
+					WebKit,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.jeremiahgassensmith.threadlight;
+				PRODUCT_NAME = ThreadLight;
+				REGISTER_APP_GROUPS = YES;
+				SDKROOT = macosx;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		A84EEBB82FF359F200CB23B0 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "macOS (App)/ThreadLight.entitlements";
+				CODE_SIGN_INJECT_BASE_ENTITLEMENTS = NO;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 6;
+				DEVELOPMENT_TEAM = C2N7W5247T;
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "macOS (App)/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = ThreadLight;
+				INFOPLIST_KEY_NSMainStoryboardFile = Main;
+				INFOPLIST_KEY_NSPrincipalClass = NSApplication;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.14;
+				MARKETING_VERSION = 0.1.5;
+				OTHER_LDFLAGS = (
+					"-framework",
+					SafariServices,
+					"-framework",
+					WebKit,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.jeremiahgassensmith.threadlight;
+				PRODUCT_NAME = ThreadLight;
+				REGISTER_APP_GROUPS = YES;
+				SDKROOT = macosx;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		A84EEB5D2FF359F100CB23B0 /* Build configuration list for PBXProject "ThreadLight" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A84EEBA92FF359F200CB23B0 /* Debug */,
+				A84EEBAA2FF359F200CB23B0 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A84EEBAB2FF359F200CB23B0 /* Build configuration list for PBXNativeTarget "ThreadLight Extension (iOS)" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A84EEBAC2FF359F200CB23B0 /* Debug */,
+				A84EEBAD2FF359F200CB23B0 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A84EEBAF2FF359F200CB23B0 /* Build configuration list for PBXNativeTarget "ThreadLight (iOS)" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A84EEBB02FF359F200CB23B0 /* Debug */,
+				A84EEBB12FF359F200CB23B0 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A84EEBB22FF359F200CB23B0 /* Build configuration list for PBXNativeTarget "ThreadLight Extension (macOS)" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A84EEBB32FF359F200CB23B0 /* Debug */,
+				A84EEBB42FF359F200CB23B0 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A84EEBB62FF359F200CB23B0 /* Build configuration list for PBXNativeTarget "ThreadLight (macOS)" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A84EEBB72FF359F200CB23B0 /* Debug */,
+				A84EEBB82FF359F200CB23B0 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = A84EEB5A2FF359F100CB23B0 /* Project object */;
+}

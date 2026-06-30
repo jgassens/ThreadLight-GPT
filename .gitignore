@@ -1,0 +1,11 @@
+node_modules/
+extension/dist/
+extension/manifest.json
+coverage/
+packages/
+DerivedData/
+native/DerivedData/
+.notary/
+*.p8
+.DS_Store
+*.log

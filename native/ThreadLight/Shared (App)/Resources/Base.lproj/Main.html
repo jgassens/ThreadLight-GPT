@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <title>ThreadLight</title>
+    <link rel="stylesheet" href="../Style.css">
+    <script src="../Script.js" defer></script>
+</head>
+<body>
+    <main class="app-shell">
+        <header class="hero">
+            <img src="../Icon.png" width="96" height="96" alt="">
+            <div>
+                <h1>ThreadLight</h1>
+                <p class="lede">A local-only Safari extension for keeping long ChatGPT web threads lighter in the current tab.</p>
+            </div>
+        </header>
+
+        <section class="status-panel platform-mac">
+            <p class="status-label">Safari extension status</p>
+            <p class="state-unknown">ThreadLight is ready to enable in Safari Settings.</p>
+            <p class="state-on">ThreadLight is enabled in Safari.</p>
+            <p class="state-off">ThreadLight is installed but not enabled yet.</p>
+            <button class="open-preferences">Open Safari Settings</button>
+        </section>
+
+        <section class="status-panel platform-ios">
+            <p class="status-label">Safari extension setup</p>
+            <p>Open Settings, choose Safari, choose Extensions, then enable ThreadLight and allow access to ChatGPT domains.</p>
+        </section>
+
+        <section class="grid">
+            <article>
+                <h2>How It Works</h2>
+                <p>ThreadLight shows only the most recent visible turns from recognized ChatGPT conversation responses. The full conversation remains with ChatGPT.</p>
+            </article>
+            <article>
+                <h2>Privacy</h2>
+                <p>No analytics, no tracking, no backend server, and no chat content storage. Settings stay local on this device.</p>
+            </article>
+            <article>
+                <h2>Restore</h2>
+                <p>Use the Safari toolbar popup to restore the full thread for one reload, or disable ThreadLight and reload.</p>
+            </article>
+            <article>
+                <h2>Access</h2>
+                <p>ThreadLight asks only for ChatGPT web domains: chatgpt.com and chat.openai.com.</p>
+            </article>
+        </section>
+
+        <footer>
+            <p>Unofficial utility. Not affiliated with OpenAI.</p>
+        </footer>
+    </main>
+</body>
+</html>

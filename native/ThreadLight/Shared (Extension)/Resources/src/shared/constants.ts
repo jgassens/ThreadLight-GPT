@@ -1,0 +1,24 @@
+export const THREADLIGHT_NAMESPACE = "threadlight";
+export const SETTINGS_STORAGE_KEY = "threadlight_settings_v1";
+export const SETTINGS_PAGE_STORAGE_KEY = "threadlight_config_v1";
+export const THREADLIGHT_CONFIG_EVENT = "threadlight-config";
+export const THREADLIGHT_REQUEST_CONFIG_EVENT = "threadlight-request-config";
+export const THREADLIGHT_STATUS_EVENT = "threadlight-status";
+export const THREADLIGHT_NAVIGATION_EVENT = "threadlight-navigation";
+export const THREADLIGHT_FETCH_PATCHED_FLAG = "__threadlightFetchPatched";
+export const THREADLIGHT_HISTORY_PATCHED_FLAG = "__threadlightHistoryPatched";
+export const THREADLIGHT_STATUS_PILL_ID = "threadlight-status-pill";
+export const THREADLIGHT_ULTRA_LEAN_CLASS = "threadlight-ultra-lean";
+export const THREADLIGHT_COLLAPSE_CLASS = "threadlight-collapse-long-users";
+export const THREADLIGHT_DOM_PRUNE_CLASS = "threadlight-dom-prune";
+export const THREADLIGHT_HIDDEN_TURN_CLASS = "threadlight-hidden-turn";
+export const THREADLIGHT_LONG_USER_COLLAPSED_CLASS = "threadlight-user-message-collapsed";
+export const THREADLIGHT_LONG_USER_EXPANDED_CLASS = "threadlight-user-message-expanded";
+export const THREADLIGHT_LONG_USER_THRESHOLD = 2000;
+export const THREADLIGHT_PROXY_READY_MESSAGE = "threadlight-proxy-ready";
+export const THREADLIGHT_RESTORE_MESSAGE = "threadlight-restore-full-thread";
+export const THREADLIGHT_GET_SETTINGS_MESSAGE = "threadlight-get-settings";
+export const THREADLIGHT_UPDATE_SETTINGS_MESSAGE = "threadlight-update-settings";
+
+export const CHATGPT_HOSTS = ["chatgpt.com", "chat.openai.com"] as const;
+export const HIDDEN_ROLES = new Set(["system", "tool", "thinking"]);
