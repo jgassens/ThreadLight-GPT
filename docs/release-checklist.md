@@ -39,6 +39,7 @@
 - Pricing selected.
 - Paid Apps Agreement complete.
 - TestFlight smoke test complete.
+- App Store Connect export/upload succeeds with distribution signing and provisioning.
 
 ## Signing And Notary
 
@@ -52,7 +53,11 @@ Do not commit credentials, key IDs, private keys, or exported signing material.
 
 Current local status:
 
-- Developer ID Application signing is available for team `C2N7W5247T`.
-- The Release macOS app verifies with `codesign --verify --deep --strict --verbose=4` when keychain access is available.
-- `spctl` rejects the app as `Unnotarized Developer ID`.
-- `xcrun notarytool store-credentials threadlight-notary ...` is blocked by Apple's `A required agreement is missing or has expired` response.
+- 2026-07-03: `npm run verify` passes.
+- 2026-07-03: `npm run package:safari:zip` passes and produces a runtime-only zip with no `__MACOSX`, `.ts`, README, or `.DS_Store` entries.
+- 2026-07-03: Xcode 26.6 archives `ThreadLight (macOS)` as version `0.1.10`, build `10`, universal `x86_64 arm64`.
+- 2026-07-03: Developer ID export succeeds at `/private/tmp/threadlight-developer-id-export-codex/ThreadLight.app`.
+- 2026-07-03: `codesign --verify --deep --strict --verbose=4 /private/tmp/threadlight-developer-id-export-codex/ThreadLight.app` passes when run with keychain access.
+- 2026-07-03: `/private/tmp/ThreadLight-0.1.10-codex.dmg` is signed, notarized, stapled, Gatekeeper-accepted as `Notarized Developer ID`, and `hdiutil verify` passes.
+- 2026-07-03: App Store Connect export is not ready locally. `xcodebuild -exportArchive` with `method=app-store-connect` fails with `No Accounts`, no `Mac Installer Distribution` signing certificate, and no profiles for `com.jeremiahgassensmith.threadlight`.
+- 2026-07-03: Xcode reports CoreSimulator `1051.54.0` is older than expected build `1051.55.0`; macOS archive/export is unaffected, but iOS/iPadOS simulator QA should wait until the local Xcode/CoreSimulator install is repaired.

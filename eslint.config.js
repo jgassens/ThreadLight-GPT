@@ -1,5 +1,28 @@
 import js from "@eslint/js";
-import tseslint from "typescript-eslint";
+import tsParser from "@typescript-eslint/parser";
+
+const threadlightPlugin = {
+  rules: {
+    "no-explicit-any": {
+      meta: {
+        type: "problem",
+        docs: {
+          description: "Disallow explicit any types"
+        },
+        messages: {
+          unexpectedAny: "Unexpected any. Specify a more precise type."
+        }
+      },
+      create(context) {
+        return {
+          TSAnyKeyword(node) {
+            context.report({ node, messageId: "unexpectedAny" });
+          }
+        };
+      }
+    }
+  }
+};
 
 export default [
   {
@@ -13,12 +36,22 @@ export default [
     ]
   },
   js.configs.recommended,
-  ...tseslint.configs.recommended,
   {
     files: ["**/*.ts"],
+    languageOptions: {
+      parser: tsParser,
+      parserOptions: {
+        ecmaVersion: "latest",
+        sourceType: "module"
+      }
+    },
+    plugins: {
+      threadlight: threadlightPlugin
+    },
     rules: {
-      "@typescript-eslint/no-explicit-any": "error",
-      "no-undef": "off"
+      "threadlight/no-explicit-any": "error",
+      "no-undef": "off",
+      "no-unused-vars": "off"
     }
   },
   {

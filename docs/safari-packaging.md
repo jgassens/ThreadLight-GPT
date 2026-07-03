@@ -25,6 +25,22 @@ Outputs:
 
 Production builds are minified and do not include source maps. Use `npm run build:dev` for local sourcemaps.
 
+`npm run package:safari:zip` stages only runtime files and then runs the equivalent of:
+
+```bash
+cd packages
+zip -X -r threadlight-extension.zip threadlight-extension
+```
+
+The 2026-07-03 package check was:
+
+```bash
+unzip -l packages/threadlight-extension.zip
+unzip -l packages/threadlight-extension.zip | rg "(__MACOSX|\\.ts$|README|DS_Store)"
+```
+
+The second command must return no matches.
+
 ## Generate The Native Project
 
 Preferred local command, tested with Xcode 26.6:
@@ -109,14 +125,88 @@ resource fork, Finder information, or similar detritus not allowed
 
 Current local result:
 
-- `ThreadLight (macOS)` builds and launches locally.
-- The Debug app at `/private/tmp/threadlight-derived/Build/Products/Debug/ThreadLight.app` registers `com.jeremiahgassensmith.threadlight.Extension(0.1.5)` with PlugInKit/Safari extension tooling.
-- The release app builds with `Developer ID Application: JEREMIAH JOSEPH GASSENSMITH (C2N7W5247T)`.
-- `codesign --verify --deep --strict --verbose=4` passes for the release app when run with keychain access.
-- The `threadlight-notary` keychain profile is available.
-- A signed DMG at `/private/tmp/ThreadLight-0.1.5.dmg` was accepted by Apple notarization, stapled, validated, and accepted by Gatekeeper as `Notarized Developer ID` on 2026-06-30.
+- 2026-07-03: `ThreadLight (macOS)` archives with Xcode 26.6 as version `0.1.10`, build `10`, universal `x86_64 arm64`.
+- 2026-07-03: the archive path was `/private/tmp/ThreadLight-0.1.10-10-codex.xcarchive`.
+- 2026-07-03: Developer ID export succeeded at `/private/tmp/threadlight-developer-id-export-codex/ThreadLight.app`.
+- 2026-07-03: `codesign --verify --deep --strict --verbose=4 /private/tmp/threadlight-developer-id-export-codex/ThreadLight.app` passes when run with keychain access.
+- 2026-07-03: `/private/tmp/ThreadLight-0.1.10-codex.dmg` was accepted by Apple notarization, stapled, validated, accepted by Gatekeeper as `Notarized Developer ID`, and verified by `hdiutil verify`.
+- 2026-07-03: App Store Connect export is blocked locally by missing Xcode/App Store account state, a missing `Mac Installer Distribution` signing certificate, and missing profiles for `com.jeremiahgassensmith.threadlight`.
 
 Xcode also reports a CoreSimulator version mismatch. That does not block the macOS build, but iOS Simulator testing should wait until the local CoreSimulator/Xcode install is repaired.
+
+## Release Archive And Notarized DMG Commands
+
+The current macOS archive command tested with Xcode 26.6 was:
+
+```bash
+xcodebuild \
+  -project native/ThreadLight/ThreadLight.xcodeproj \
+  -scheme "ThreadLight (macOS)" \
+  -configuration Release \
+  -destination 'generic/platform=macOS' \
+  -archivePath /private/tmp/ThreadLight-0.1.10-10-codex.xcarchive \
+  -derivedDataPath /private/tmp/threadlight-archive-derived-codex \
+  archive
+```
+
+The App Store Connect export command tested was:
+
+```bash
+xcodebuild \
+  -exportArchive \
+  -archivePath /private/tmp/ThreadLight-0.1.10-10-codex.xcarchive \
+  -exportPath /private/tmp/threadlight-appstore-export-codex \
+  -exportOptionsPlist /private/tmp/threadlight-export-options-app-store.plist \
+  -allowProvisioningUpdates
+```
+
+The export options used `method=app-store-connect`, `destination=export`, `signingStyle=automatic`, and team `C2N7W5247T`. The local result was `** EXPORT FAILED **` with `No Accounts`, no `Mac Installer Distribution` signing certificate, and no profiles for `com.jeremiahgassensmith.threadlight`.
+
+The Developer ID export command tested was:
+
+```bash
+xcodebuild \
+  -exportArchive \
+  -archivePath /private/tmp/ThreadLight-0.1.10-10-codex.xcarchive \
+  -exportPath /private/tmp/threadlight-developer-id-export-codex \
+  -exportOptionsPlist /private/tmp/threadlight-export-options-developer-id.plist \
+  -allowProvisioningUpdates
+```
+
+The export options used `method=developer-id`, `destination=export`, `signingStyle=automatic`, and team `C2N7W5247T`.
+
+The notarized DMG was created and validated with:
+
+```bash
+hdiutil create \
+  -volname ThreadLight \
+  -srcfolder /private/tmp/threadlight-dmg-root.gIGz66 \
+  -format UDZO \
+  -ov \
+  /private/tmp/ThreadLight-0.1.10-codex.dmg
+
+codesign \
+  --force \
+  --sign "Developer ID Application: JEREMIAH JOSEPH GASSENSMITH (C2N7W5247T)" \
+  /private/tmp/ThreadLight-0.1.10-codex.dmg
+
+xcrun notarytool submit \
+  /private/tmp/ThreadLight-0.1.10-codex.dmg \
+  --keychain-profile threadlight-notary \
+  --wait
+
+xcrun stapler staple /private/tmp/ThreadLight-0.1.10-codex.dmg
+xcrun stapler validate /private/tmp/ThreadLight-0.1.10-codex.dmg
+spctl -a -t open --context context:primary-signature -vv /private/tmp/ThreadLight-0.1.10-codex.dmg
+hdiutil verify /private/tmp/ThreadLight-0.1.10-codex.dmg
+shasum -a 256 /private/tmp/ThreadLight-0.1.10-codex.dmg
+```
+
+Notary submission `e992840e-5d46-4baa-8938-085058fe63c6` returned `Accepted`. The stapled DMG hash was:
+
+```text
+b347dccfe3992cdf61f99fb762f6dfa12dea391f4d1ac2187a26c7f909811547  /private/tmp/ThreadLight-0.1.10-codex.dmg
+```
 
 ## Safari Document-Start Verification
 

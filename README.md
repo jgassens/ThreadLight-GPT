@@ -46,7 +46,3 @@ npm run verify
 - Settings are local-only.
 - Unknown ChatGPT response shapes pass through unchanged.
 - Host permissions are limited to ChatGPT domains.
-
-## Next Recommended Task
-
-Run the manual Safari QA pass against real ChatGPT pages: normal conversations, shared conversations, long text threads, long code-block threads, popup setting changes, restore-full-thread, disable/reload behavior, and the domain permission prompt. Record the exact Safari/macOS results in `docs/qa-protocol.md` and update the App Review packet if any reviewer-facing behavior changes.
