@@ -38,7 +38,10 @@ function getMapping(data: JsonObject): Record<string, unknown> | undefined {
   return isRecord(data.mapping) ? data.mapping : undefined;
 }
 
-function buildActivePath(mapping: Record<string, unknown>, currentNodeId: string): PathNode[] | undefined {
+function buildActivePath(
+  mapping: Record<string, unknown>,
+  currentNodeId: string
+): PathNode[] | undefined {
   const seen = new Set<string>();
   const reversedPath: PathNode[] = [];
   let nextId: string | undefined = currentNodeId;
@@ -48,6 +51,10 @@ function buildActivePath(mapping: Record<string, unknown>, currentNodeId: string
       return undefined;
     }
     seen.add(nextId);
+
+    if (!Object.prototype.hasOwnProperty.call(mapping, nextId)) {
+      return undefined;
+    }
 
     const node = mapping[nextId];
     if (!isRecord(node)) {
@@ -61,7 +68,10 @@ function buildActivePath(mapping: Record<string, unknown>, currentNodeId: string
   return reversedPath.reverse();
 }
 
-function indexVisibleTurns(path: PathNode[]): { totalVisibleTurns: number; turnById: Map<string, number | null> } {
+function indexVisibleTurns(path: PathNode[]): {
+  totalVisibleTurns: number;
+  turnById: Map<string, number | null>;
+} {
   let totalVisibleTurns = 0;
   let previousVisibleRole: string | undefined;
   const turnById = new Map<string, number | null>();
@@ -99,7 +109,11 @@ function makeStats(
   };
 }
 
-function chooseRootAnchor(path: PathNode[], suffix: PathNode[], explicitRootId: string | undefined): PathNode | undefined {
+function chooseRootAnchor(
+  path: PathNode[],
+  suffix: PathNode[],
+  explicitRootId: string | undefined
+): PathNode | undefined {
   const suffixIds = new Set(suffix.map((item) => item.id));
   const explicitRoot = explicitRootId ? path.find((item) => item.id === explicitRootId) : undefined;
   const candidate = explicitRoot ?? path[0];
@@ -112,10 +126,10 @@ function chooseRootAnchor(path: PathNode[], suffix: PathNode[], explicitRootId: 
 }
 
 function cloneKeptPath(data: JsonObject, keptPath: PathNode[], currentNodeId: string): JsonObject {
-  const mapping: Record<string, JsonObject> = {};
+  const mapping = Object.create(null) as Record<string, JsonObject>;
 
   keptPath.forEach((item, index) => {
-    const parent = index > 0 ? keptPath[index - 1]?.id ?? null : null;
+    const parent = index > 0 ? (keptPath[index - 1]?.id ?? null) : null;
     const child = keptPath[index + 1]?.id;
     mapping[item.id] = {
       ...item.node,

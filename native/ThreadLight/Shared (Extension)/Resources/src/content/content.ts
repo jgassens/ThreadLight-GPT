@@ -12,7 +12,7 @@ import {
   writeSettingsForPage
 } from "../shared/events";
 import type { ThreadLightSettingsV1, ThreadLightStatusEventDetail } from "../shared/types";
-import { effectiveKeepLastTurns } from "../shared/settings";
+import { effectiveKeepLastTurns, isRecord } from "../shared/settings";
 import { getSettings, subscribeSettingsChanges, updateSettings } from "../shared/storage";
 import { CHATGPT_MAIN_SELECTOR } from "./dom-selectors";
 import { setDomPruning, type DomPruneStats } from "./dom-pruner";
@@ -21,6 +21,7 @@ import { setUserCollapseEnabled } from "./user-collapse";
 
 const STYLE_ID = "threadlight-content-style";
 let currentSettings: ThreadLightSettingsV1 | undefined;
+let domPruningSuspendedForFullReload = false;
 // Two independent status sources: the page proxy (trims conversation JSON before render)
 // and the DOM pruner (hides already-rendered turns). The pill shows whichever is actively
 // trimming so the count reflects what is really on screen.
@@ -103,8 +104,22 @@ function handlePruneStats(stats: DomPruneStats): void {
 
 function applySettings(settings: ThreadLightSettingsV1): void {
   currentSettings = settings;
+  if (settings.suspendOnceForFullReload) {
+    domPruningSuspendedForFullReload = true;
+  }
   writeSettingsForPage(settings);
   document.documentElement.classList.toggle(THREADLIGHT_ULTRA_LEAN_CLASS, settings.ultraLeanMode);
+
+  if (domPruningSuspendedForFullReload) {
+    setDomPruning(
+      { ...settings, enabled: false, keepLastTurns: effectiveKeepLastTurns(settings) },
+      handlePruneStats
+    );
+    setUserCollapseEnabled(false, false);
+    refreshPill();
+    return;
+  }
+
   setDomPruning({ ...settings, keepLastTurns: effectiveKeepLastTurns(settings) }, handlePruneStats);
   // Ultra lean also collapses long messages of any role; the user toggle is user-only.
   setUserCollapseEnabled(
@@ -114,22 +129,20 @@ function applySettings(settings: ThreadLightSettingsV1): void {
   refreshPill();
 }
 
-function scheduleSuspendClear(settings: ThreadLightSettingsV1): void {
-  if (!settings.suspendOnceForFullReload) {
-    return;
-  }
-
-  window.setTimeout(() => {
-    void updateSettings({ suspendOnceForFullReload: false });
-  }, 8000);
-}
-
 function handleStatusEvent(event: Event): void {
   if (!(event instanceof CustomEvent) || !isThreadLightStatusDetail(event.detail)) {
     return;
   }
 
   proxyStatus = event.detail;
+  if (
+    event.detail.state === "paused" &&
+    event.detail.reason === "suspended-once" &&
+    currentSettings?.suspendOnceForFullReload
+  ) {
+    domPruningSuspendedForFullReload = true;
+    void updateSettings({ suspendOnceForFullReload: false });
+  }
   refreshPill();
 }
 
@@ -142,7 +155,6 @@ function handleConfigRequest(): void {
   void (async () => {
     const settings = await getSettings();
     applySettings(settings);
-    scheduleSuspendClear(settings);
   })();
 }
 
@@ -151,9 +163,17 @@ function handleNavigationEvent(event: Event): void {
     return;
   }
 
-  const detail = event.detail as { source?: unknown; version?: unknown };
+  const detail = event.detail;
+  if (!isRecord(detail)) {
+    return;
+  }
+
   if (detail.source !== "threadlight" || detail.version !== 1) {
     return;
+  }
+
+  if (!currentSettings.suspendOnceForFullReload) {
+    domPruningSuspendedForFullReload = false;
   }
 
   proxyStatus = makeThreadLightStatusDetail({
@@ -165,17 +185,18 @@ function handleNavigationEvent(event: Event): void {
   // A fresh navigation invalidates any prior trim counts until the pruner re-runs.
   domStatus = undefined;
   refreshPill();
-  setDomPruning(
-    { ...currentSettings, keepLastTurns: effectiveKeepLastTurns(currentSettings) },
-    handlePruneStats
-  );
+  applySettings(currentSettings);
 }
 
 function handleWindowMessage(event: MessageEvent): void {
   if (event.source !== window || event.origin !== window.location.origin) {
     return;
   }
-  const data = event.data as { source?: unknown; type?: unknown; version?: unknown };
+  const data = event.data;
+  if (!isRecord(data)) {
+    return;
+  }
+
   if (
     data.source === "threadlight" &&
     data.type === THREADLIGHT_PROXY_READY_MESSAGE &&
@@ -194,11 +215,9 @@ async function initContent(): Promise<void> {
 
   const settings = await getSettings();
   applySettings(settings);
-  scheduleSuspendClear(settings);
 
   subscribeSettingsChanges((nextSettings) => {
     applySettings(nextSettings);
-    scheduleSuspendClear(nextSettings);
   });
 }
 

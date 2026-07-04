@@ -131,6 +131,9 @@ Current local result:
 - 2026-07-03: `codesign --verify --deep --strict --verbose=4 /private/tmp/threadlight-developer-id-export-codex/ThreadLight.app` passes when run with keychain access.
 - 2026-07-03: `/private/tmp/ThreadLight-0.1.10-codex.dmg` was accepted by Apple notarization, stapled, validated, accepted by Gatekeeper as `Notarized Developer ID`, and verified by `hdiutil verify`.
 - 2026-07-03: App Store Connect export is blocked locally by missing Xcode/App Store account state, a missing `Mac Installer Distribution` signing certificate, and missing profiles for `com.jeremiahgassensmith.threadlight`.
+- 2026-07-03: After adding `npm run sync:native`, native WebExtension resources were synced from the current extension build and verified with `cmp` for generated `dist` files, `manifest.json`, and `popup.html`.
+- 2026-07-03: A fresh synced macOS archive succeeded at `/private/tmp/ThreadLight-0.1.10-10-codex-sync.xcarchive`.
+- 2026-07-03: App Store Connect export from the fresh synced archive still fails locally with `No Accounts`, no `Mac Installer Distribution` signing certificate, and no profiles for `com.jeremiahgassensmith.threadlight`.
 
 Xcode also reports a CoreSimulator version mismatch. That does not block the macOS build, but iOS Simulator testing should wait until the local CoreSimulator/Xcode install is repaired.
 
@@ -161,6 +164,26 @@ xcodebuild \
 ```
 
 The export options used `method=app-store-connect`, `destination=export`, `signingStyle=automatic`, and team `C2N7W5247T`. The local result was `** EXPORT FAILED **` with `No Accounts`, no `Mac Installer Distribution` signing certificate, and no profiles for `com.jeremiahgassensmith.threadlight`.
+
+The same failure repeated on the fresh synced archive:
+
+```bash
+xcodebuild \
+  -exportArchive \
+  -archivePath /private/tmp/ThreadLight-0.1.10-10-codex-sync.xcarchive \
+  -exportPath /private/tmp/threadlight-appstore-export-codex-sync \
+  -exportOptionsPlist /private/tmp/threadlight-export-options-app-store.plist \
+  -allowProvisioningUpdates
+```
+
+Current failure:
+
+```text
+error: exportArchive No Accounts
+error: exportArchive No signing certificate "Mac Installer Distribution" found
+error: exportArchive No profiles for 'com.jeremiahgassensmith.threadlight' were found
+** EXPORT FAILED **
+```
 
 The Developer ID export command tested was:
 
@@ -260,6 +283,22 @@ After TypeScript changes:
 
 ```bash
 npm run verify
+npm run sync:native
+npm run verify
 ```
 
-If the native project was generated with `--copy-resources`, rerun the converter with `--rebuild-project` or copy updated extension resources into the generated project according to Xcode's file layout.
+`npm run sync:native` rebuilds the WebExtension, then refreshes the checked-in Xcode resources at:
+
+```text
+native/ThreadLight/Shared (Extension)/Resources
+```
+
+The sync copies the current `dist`, `popup`, `src`, generated manifests, and the manifest-referenced icon PNGs. It intentionally avoids stray duplicate icon files such as `icon-128 2.png`.
+
+Before archiving for App Store Connect, confirm native resources match the extension build:
+
+```bash
+npm run verify
+```
+
+The final verify rebuilds `extension/dist` and then runs `npm run check:native`, which fails if the generated Xcode resource copy is stale.

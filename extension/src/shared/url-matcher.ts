@@ -58,6 +58,19 @@ export function matchesConversationEndpoint(url: URL, method: string = "GET"): b
   );
 }
 
+export function isChatGptUrl(value: unknown): boolean {
+  if (typeof value !== "string") {
+    return false;
+  }
+
+  try {
+    const url = new URL(value);
+    return url.protocol === "https:" && CHATGPT_HOST_SET.has(url.hostname);
+  } catch {
+    return false;
+  }
+}
+
 export function isConversationJsonRequest(
   input: RequestInfo | URL,
   init?: RequestInit,

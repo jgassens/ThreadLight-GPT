@@ -9,11 +9,12 @@ import type {
   ThreadLightRuntimeResponse,
   ThreadLightSettingsV1
 } from "./types";
+import { isChatGptUrl } from "./url-matcher";
 
 type StorageItems = Record<string, unknown>;
 type StorageChange = { oldValue?: unknown; newValue?: unknown };
 type StorageChangeListener = (changes: Record<string, StorageChange>, areaName: string) => void;
-type RuntimeMessageSender = Record<string, unknown>;
+export type RuntimeMessageSender = Record<string, unknown>;
 type RuntimeSendResponse = (response: ThreadLightRuntimeResponse) => void;
 type RuntimeMessageListener = (
   message: unknown,
@@ -21,13 +22,9 @@ type RuntimeMessageListener = (
   sendResponse: RuntimeSendResponse
 ) => boolean | void | Promise<ThreadLightRuntimeResponse>;
 
-
 interface StorageArea {
   get(keys?: string | string[] | StorageItems | null): Promise<StorageItems> | StorageItems | void;
-  get(
-    keys: string | string[] | StorageItems | null,
-    callback: (items: StorageItems) => void
-  ): void;
+  get(keys: string | string[] | StorageItems | null, callback: (items: StorageItems) => void): void;
   set(items: StorageItems): Promise<void> | void;
   set(items: StorageItems, callback: () => void): void;
 }
@@ -40,6 +37,7 @@ interface StorageOnChanged {
 interface ExtensionRuntime {
   getURL(path: string): string;
   getManifest?(): { version?: string };
+  lastError?: { message?: string };
   sendMessage?(
     message: ThreadLightRuntimeMessage
   ): Promise<ThreadLightRuntimeResponse> | ThreadLightRuntimeResponse | void;
@@ -53,7 +51,21 @@ interface ExtensionRuntime {
   };
 }
 
+interface ExtensionTab {
+  id?: number;
+  pendingUrl?: string;
+  url?: string;
+}
+
 interface ExtensionTabs {
+  query(queryInfo: {
+    active?: boolean;
+    currentWindow?: boolean;
+  }): Promise<ExtensionTab[]> | ExtensionTab[] | void;
+  query(
+    queryInfo: { active?: boolean; currentWindow?: boolean },
+    callback: (tabs: ExtensionTab[]) => void
+  ): void;
   reload(tabId?: number, reloadProperties?: { bypassCache?: boolean }): Promise<void> | void;
   reload(
     tabId: number | undefined,
@@ -195,7 +207,7 @@ export function getRuntimeUrl(path: string): string {
 }
 
 export function getExtensionVersion(): string {
-  return getExtensionApi()?.runtime?.getManifest?.().version ?? "0.1.5";
+  return getExtensionApi()?.runtime?.getManifest?.().version ?? "dev";
 }
 
 export async function sendRuntimeMessage(
@@ -243,32 +255,88 @@ export function addRuntimeMessageListener(listener: RuntimeMessageListener): () 
   return () => onMessage.removeListener?.(listener);
 }
 
-export async function reloadCurrentTab(): Promise<void> {
-  const tabs = getExtensionApi()?.tabs;
-  if (!tabs?.reload) {
-    return;
-  }
-
+async function queryActiveTab(tabs: ExtensionTabs): Promise<ExtensionTab | undefined> {
   try {
-    const maybeResult = tabs.reload(undefined, { bypassCache: false });
-    if (isPromiseLike<void>(maybeResult)) {
-      await maybeResult;
+    const maybeResult = tabs.query({ active: true, currentWindow: true });
+    if (isPromiseLike<ExtensionTab[]>(maybeResult)) {
+      return (await maybeResult)[0];
     }
-    return;
+    if (Array.isArray(maybeResult)) {
+      return maybeResult[0];
+    }
   } catch {
     // Chrome-style callback APIs may throw when called without a callback.
   }
 
-  await new Promise<void>((resolve) => {
+  return new Promise((resolve) => {
     try {
-      tabs.reload(undefined, { bypassCache: false }, () => resolve());
+      tabs.query({ active: true, currentWindow: true }, (queriedTabs) => {
+        resolve(queriedTabs[0]);
+      });
     } catch {
-      resolve();
+      resolve(undefined);
     }
   });
 }
 
-export function subscribeSettingsChanges(listener: (settings: ThreadLightSettingsV1) => void): () => void {
+export async function getActiveChatGptTabId(): Promise<number | undefined> {
+  const tabs = getExtensionApi()?.tabs;
+  if (!tabs?.query) {
+    return undefined;
+  }
+
+  const activeTab = await queryActiveTab(tabs);
+  if (!activeTab || !Number.isInteger(activeTab.id)) {
+    return undefined;
+  }
+
+  const tabUrl = activeTab.url ?? activeTab.pendingUrl;
+  return isChatGptUrl(tabUrl) ? activeTab.id : undefined;
+}
+
+function runtimeLastErrorMessage(): string | undefined {
+  const lastError = getExtensionApi()?.runtime?.lastError;
+  if (!isRecord(lastError)) {
+    return undefined;
+  }
+  return typeof lastError.message === "string" ? lastError.message : "browser runtime error";
+}
+
+export async function reloadTab(tabId: number): Promise<boolean> {
+  const tabs = getExtensionApi()?.tabs;
+  if (!tabs?.reload) {
+    return false;
+  }
+
+  let usedPromiseApi = false;
+  try {
+    const maybeResult = tabs.reload(tabId, { bypassCache: false });
+    if (isPromiseLike<void>(maybeResult)) {
+      usedPromiseApi = true;
+      await maybeResult;
+    }
+    return true;
+  } catch {
+    if (usedPromiseApi) {
+      return false;
+    }
+    // Chrome-style callback APIs may throw when called without a callback.
+  }
+
+  return new Promise<boolean>((resolve) => {
+    try {
+      tabs.reload(tabId, { bypassCache: false }, () =>
+        resolve(runtimeLastErrorMessage() === undefined)
+      );
+    } catch {
+      resolve(false);
+    }
+  });
+}
+
+export function subscribeSettingsChanges(
+  listener: (settings: ThreadLightSettingsV1) => void
+): () => void {
   const onChanged = getExtensionApi()?.storage?.onChanged;
   if (!onChanged) {
     return () => undefined;

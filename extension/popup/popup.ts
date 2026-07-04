@@ -108,11 +108,13 @@ async function initPopup(): Promise<void> {
 
   queryElement<HTMLButtonElement>("#restore-full-thread").addEventListener("click", () => {
     void (async () => {
-      await persist({ suspendOnceForFullReload: true });
       const response = await sendRuntimeMessage({ type: "threadlight-restore-full-thread" });
+      if (response.settings) {
+        render(response.settings);
+      }
       queryElement<HTMLElement>("#status-text").textContent = response.ok
         ? "Reloading once with the full thread restored."
-        : "Reload the ChatGPT tab once to restore the full thread.";
+        : "Open ThreadLight from a ChatGPT tab to restore the full thread.";
     })();
   });
 

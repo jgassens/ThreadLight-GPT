@@ -3,6 +3,8 @@
 ## Code Gate
 
 - `npm run verify` passes.
+- `npm run sync:native` passes after any extension source changes.
+- A second `npm run verify` passes after `npm run sync:native`, proving the native Xcode resource copy is not stale.
 - `npm run package:safari:zip` passes.
 - Manifest permissions are limited to `storage` and ChatGPT host permissions.
 - No forbidden permissions appear in `extension/manifest.json`.
@@ -12,6 +14,7 @@
 ## Native Project Gate
 
 - Safari native project generated from current `extension/manifest.json`.
+- Native Safari extension resources match the current `extension/dist`, popup, manifests, and icon files.
 - Bundle identifiers configured.
 - Signing team configured.
 - Native app copy is branded and honest.
@@ -61,3 +64,6 @@ Current local status:
 - 2026-07-03: `/private/tmp/ThreadLight-0.1.10-codex.dmg` is signed, notarized, stapled, Gatekeeper-accepted as `Notarized Developer ID`, and `hdiutil verify` passes.
 - 2026-07-03: App Store Connect export is not ready locally. `xcodebuild -exportArchive` with `method=app-store-connect` fails with `No Accounts`, no `Mac Installer Distribution` signing certificate, and no profiles for `com.jeremiahgassensmith.threadlight`.
 - 2026-07-03: Xcode reports CoreSimulator `1051.54.0` is older than expected build `1051.55.0`; macOS archive/export is unaffected, but iOS/iPadOS simulator QA should wait until the local Xcode/CoreSimulator install is repaired.
+- 2026-07-03: `npm run sync:native` was added and used to sync native WebExtension resources from the current extension build.
+- 2026-07-03: A fresh synced macOS archive succeeded at `/private/tmp/ThreadLight-0.1.10-10-codex-sync.xcarchive`.
+- 2026-07-03: App Store Connect export from the fresh synced archive still fails with `No Accounts`, no `Mac Installer Distribution` signing certificate, and no profiles for `com.jeremiahgassensmith.threadlight`.

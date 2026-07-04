@@ -4,7 +4,13 @@ import {
   THREADLIGHT_UPDATE_SETTINGS_MESSAGE
 } from "../../extension/src/shared/constants";
 import { DEFAULT_SETTINGS } from "../../extension/src/shared/settings";
-import { getSettings, updateSettings } from "../../extension/src/shared/storage";
+import {
+  getActiveChatGptTabId,
+  getExtensionVersion,
+  getSettings,
+  reloadTab,
+  updateSettings
+} from "../../extension/src/shared/storage";
 
 type BrowserGlobal = typeof globalThis & {
   browser?: unknown;
@@ -83,5 +89,50 @@ describe("storage", () => {
 
     await expect(getSettings()).resolves.toEqual(DEFAULT_SETTINGS);
     expect(sendMessage).not.toHaveBeenCalled();
+  });
+
+  it("falls back to a non-stale dev version when the manifest is unavailable", () => {
+    (globalThis as BrowserGlobal).browser = { runtime: { getURL: vi.fn((path: string) => path) } };
+
+    expect(getExtensionVersion()).toBe("dev");
+  });
+
+  it("finds the active ChatGPT tab before restoring a full thread", async () => {
+    const query = vi.fn(async () => [{ id: 7, url: "https://chatgpt.com/c/synthetic" }]);
+    (globalThis as BrowserGlobal).browser = { tabs: { query } };
+
+    await expect(getActiveChatGptTabId()).resolves.toBe(7);
+    expect(query).toHaveBeenCalledWith({ active: true, currentWindow: true });
+  });
+
+  it("rejects non-ChatGPT active tabs before restore reloads", async () => {
+    const query = vi.fn(async () => [{ id: 9, url: "https://example.com/" }]);
+    (globalThis as BrowserGlobal).browser = { tabs: { query } };
+
+    await expect(getActiveChatGptTabId()).resolves.toBeUndefined();
+  });
+
+  it("reloads an explicit tab id instead of the frontmost tab", async () => {
+    const reload = vi.fn(async () => undefined);
+    (globalThis as BrowserGlobal).browser = { tabs: { reload } };
+
+    await expect(reloadTab(7)).resolves.toBe(true);
+
+    expect(reload).toHaveBeenCalledWith(7, { bypassCache: false });
+    expect(reload).not.toHaveBeenCalledWith(undefined, expect.anything());
+  });
+
+  it("reports explicit tab reload failures", async () => {
+    const reload = vi.fn(async () => {
+      throw new Error("cannot reload tab");
+    });
+    (globalThis as BrowserGlobal).browser = {
+      tabs: {
+        query: vi.fn(),
+        reload
+      }
+    };
+
+    await expect(reloadTab(7)).resolves.toBe(false);
   });
 });

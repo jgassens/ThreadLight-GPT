@@ -9,13 +9,15 @@
     "build": "node scripts/build-extension.mjs --target=safari",
     "build:safari": "node scripts/build-extension.mjs",
     "build:dev": "node scripts/build-extension.mjs --target=safari --dev",
+    "check:native": "node scripts/check-native-resources.mjs",
+    "sync:native": "node scripts/sync-native-resources.mjs",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "package:safari:zip": "node scripts/package-safari.mjs",
     "typecheck": "tsc --noEmit",
     "lint": "eslint .",
     "test": "vitest run",
-    "verify": "npm run typecheck && npm run lint && npm run test && npm run build:safari"
+    "verify": "npm run typecheck && npm run lint && npm run test && npm run build:safari && npm run check:native"
   },
   "devDependencies": {
     "@eslint/js": "^9.30.0",
