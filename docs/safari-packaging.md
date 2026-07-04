@@ -60,7 +60,7 @@ The same command was smoke-tested without touching the checked-in native project
 
 ```bash
 xcrun safari-web-extension-converter ./extension \
-  --project-location /private/tmp/threadlight-converter-check-20260630-1606 \
+  --project-location dev/builds/converter-check \
   --app-name ThreadLight \
   --bundle-identifier com.jeremiahgassensmith.threadlight \
   --swift \
@@ -114,14 +114,16 @@ Use:
 This builds the macOS scheme to:
 
 ```text
-/private/tmp/threadlight-derived/Build/Products/Debug/ThreadLight.app
+dev/builds/debug-derived/Build/Products/Debug/ThreadLight.app
 ```
 
-The build products intentionally live in `/private/tmp` because this repository path receives File Provider extended attributes under `Documents/`, and those attributes can make codesign fail with:
+Local build products should live under the repo-local, gitignored `dev/builds/` directory. Before building or signing, clear File Provider extended attributes from the source and build roots because those attributes can make codesign fail with:
 
 ```text
 resource fork, Finder information, or similar detritus not allowed
 ```
+
+The debug launcher does this automatically with `xattr -cr` before invoking Xcode.
 
 Current local result:
 
@@ -147,8 +149,8 @@ xcodebuild \
   -scheme "ThreadLight (macOS)" \
   -configuration Release \
   -destination 'generic/platform=macOS' \
-  -archivePath /private/tmp/ThreadLight-0.1.10-10-codex.xcarchive \
-  -derivedDataPath /private/tmp/threadlight-archive-derived-codex \
+  -archivePath dev/builds/release/a6d6d85/ThreadLight-0.1.10-10-a6d6d85.xcarchive \
+  -derivedDataPath dev/builds/release/a6d6d85/archive-derived \
   archive
 ```
 
@@ -157,9 +159,9 @@ The App Store Connect export command tested was:
 ```bash
 xcodebuild \
   -exportArchive \
-  -archivePath /private/tmp/ThreadLight-0.1.10-10-codex.xcarchive \
-  -exportPath /private/tmp/threadlight-appstore-export-codex \
-  -exportOptionsPlist /private/tmp/threadlight-export-options-app-store.plist \
+  -archivePath dev/builds/release/a6d6d85/ThreadLight-0.1.10-10-a6d6d85.xcarchive \
+  -exportPath dev/builds/release/a6d6d85/appstore-export \
+  -exportOptionsPlist native/export-options/app-store-connect.plist \
   -allowProvisioningUpdates
 ```
 
@@ -170,9 +172,9 @@ The same failure repeated on the fresh synced archive:
 ```bash
 xcodebuild \
   -exportArchive \
-  -archivePath /private/tmp/ThreadLight-0.1.10-10-codex-sync.xcarchive \
-  -exportPath /private/tmp/threadlight-appstore-export-codex-sync \
-  -exportOptionsPlist /private/tmp/threadlight-export-options-app-store.plist \
+  -archivePath dev/builds/release/a6d6d85/ThreadLight-0.1.10-10-a6d6d85.xcarchive \
+  -exportPath dev/builds/release/a6d6d85/appstore-export \
+  -exportOptionsPlist native/export-options/app-store-connect.plist \
   -allowProvisioningUpdates
 ```
 
@@ -190,9 +192,9 @@ The Developer ID export command tested was:
 ```bash
 xcodebuild \
   -exportArchive \
-  -archivePath /private/tmp/ThreadLight-0.1.10-10-codex.xcarchive \
-  -exportPath /private/tmp/threadlight-developer-id-export-codex \
-  -exportOptionsPlist /private/tmp/threadlight-export-options-developer-id.plist \
+  -archivePath dev/builds/release/a6d6d85/ThreadLight-0.1.10-10-a6d6d85.xcarchive \
+  -exportPath dev/builds/release/a6d6d85/developer-id-export \
+  -exportOptionsPlist native/export-options/developer-id.plist \
   -allowProvisioningUpdates
 ```
 
@@ -203,26 +205,26 @@ The notarized DMG was created and validated with:
 ```bash
 hdiutil create \
   -volname ThreadLight \
-  -srcfolder /private/tmp/threadlight-dmg-root.gIGz66 \
+  -srcfolder dev/builds/release/a6d6d85/dmg-root \
   -format UDZO \
   -ov \
-  /private/tmp/ThreadLight-0.1.10-codex.dmg
+  dev/builds/release/a6d6d85/ThreadLight-0.1.10-10-a6d6d85-notarized.dmg
 
 codesign \
   --force \
   --sign "Developer ID Application: JEREMIAH JOSEPH GASSENSMITH (C2N7W5247T)" \
-  /private/tmp/ThreadLight-0.1.10-codex.dmg
+  dev/builds/release/a6d6d85/ThreadLight-0.1.10-10-a6d6d85-notarized.dmg
 
 xcrun notarytool submit \
-  /private/tmp/ThreadLight-0.1.10-codex.dmg \
+  dev/builds/release/a6d6d85/ThreadLight-0.1.10-10-a6d6d85-notarized.dmg \
   --keychain-profile threadlight-notary \
   --wait
 
-xcrun stapler staple /private/tmp/ThreadLight-0.1.10-codex.dmg
-xcrun stapler validate /private/tmp/ThreadLight-0.1.10-codex.dmg
-spctl -a -t open --context context:primary-signature -vv /private/tmp/ThreadLight-0.1.10-codex.dmg
-hdiutil verify /private/tmp/ThreadLight-0.1.10-codex.dmg
-shasum -a 256 /private/tmp/ThreadLight-0.1.10-codex.dmg
+xcrun stapler staple dev/builds/release/a6d6d85/ThreadLight-0.1.10-10-a6d6d85-notarized.dmg
+xcrun stapler validate dev/builds/release/a6d6d85/ThreadLight-0.1.10-10-a6d6d85-notarized.dmg
+spctl -a -t open --context context:primary-signature -vv dev/builds/release/a6d6d85/ThreadLight-0.1.10-10-a6d6d85-notarized.dmg
+hdiutil verify dev/builds/release/a6d6d85/ThreadLight-0.1.10-10-a6d6d85-notarized.dmg
+shasum -a 256 dev/builds/release/a6d6d85/ThreadLight-0.1.10-10-a6d6d85-notarized.dmg
 ```
 
 Notary submission `e992840e-5d46-4baa-8938-085058fe63c6` returned `Accepted`. The stapled DMG hash was:

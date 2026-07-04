@@ -3,6 +3,7 @@ extension/dist/
 extension/manifest.json
 coverage/
 packages/
+dev/
 DerivedData/
 native/DerivedData/
 .notary/

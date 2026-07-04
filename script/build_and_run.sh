@@ -6,10 +6,11 @@ APP_NAME="ThreadLight"
 PROJECT_PATH="native/ThreadLight/ThreadLight.xcodeproj"
 SCHEME="ThreadLight (macOS)"
 CONFIGURATION="Debug"
-DERIVED_DATA_PATH="/private/tmp/threadlight-derived"
 LSREGISTER="/System/Library/Frameworks/CoreServices.framework/Versions/Current/Frameworks/LaunchServices.framework/Versions/Current/Support/lsregister"
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+BUILD_ROOT="${THREADLIGHT_BUILD_ROOT:-$ROOT_DIR/dev/builds}"
+DERIVED_DATA_PATH="$BUILD_ROOT/debug-derived"
 APP_BUNDLE="$DERIVED_DATA_PATH/Build/Products/$CONFIGURATION/$APP_NAME.app"
 APP_BINARY="$APP_BUNDLE/Contents/MacOS/$APP_NAME"
 
@@ -18,6 +19,7 @@ cd "$ROOT_DIR"
 unregister_stale_threadlight_apps() {
   local search_root candidate
   for search_root in \
+    "$BUILD_ROOT" \
     "$ROOT_DIR/native/DerivedData" \
     "$HOME/Library/Developer/Xcode/DerivedData" \
     "/private/tmp"; do
@@ -31,7 +33,8 @@ unregister_stale_threadlight_apps() {
 
 pkill -x "$APP_NAME" >/dev/null 2>&1 || true
 unregister_stale_threadlight_apps
-/usr/bin/xattr -cr "$ROOT_DIR/native/ThreadLight" "$ROOT_DIR/extension" >/dev/null 2>&1 || true
+mkdir -p "$BUILD_ROOT"
+/usr/bin/xattr -cr "$ROOT_DIR/native/ThreadLight" "$ROOT_DIR/extension" "$BUILD_ROOT" >/dev/null 2>&1 || true
 rm -rf "$DERIVED_DATA_PATH/Build/Products/$CONFIGURATION/$APP_NAME.app"
 rm -rf "$DERIVED_DATA_PATH/Build/Products/$CONFIGURATION/$APP_NAME Extension.appex"
 
