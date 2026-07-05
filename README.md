@@ -8,6 +8,20 @@ ThreadLight fixes that. It's a small, local-only Safari extension that keeps onl
 
 > Unofficial project. Not affiliated with, or endorsed by, OpenAI.
 
+## See it in action
+
+<p align="center">
+  <img src="docs/media/threadlight-on.gif" alt="Scrolling a long ChatGPT conversation in Safari with ThreadLight on; the status pill reads 'showing 20 of 68 turns' and scrolling stays smooth" width="100%">
+</p>
+
+*With ThreadLight on, a 68-turn conversation renders as just its last 20 — scrolling stays quick, and the little pill tells you exactly what's live.*
+
+<p align="center">
+  <img src="docs/media/threadlight-off.gif" alt="Scrolling the same 68-turn ChatGPT conversation with ThreadLight disabled; the full thread is a longer, heavier scroll" width="100%">
+</p>
+
+*The same conversation with ThreadLight off: the whole thing loads, and it's a longer, heavier scroll.*
+
 ## Why you might want it
 
 - **Long threads stay responsive.** Typing, scrolling, and streaming replies feel like a brand-new chat again, even hundreds of turns deep.
