@@ -11,16 +11,10 @@ ThreadLight fixes that. It's a small, local-only Safari extension that keeps onl
 ## See it in action
 
 <p align="center">
-  <img src="docs/media/threadlight-on.gif" alt="Scrolling a long ChatGPT conversation in Safari with ThreadLight on; the status pill reads 'showing 20 of 68 turns' and scrolling stays smooth" width="100%">
+  <img src="docs/media/threadlight-demo.gif" alt="Side-by-side comparison of the same 68-turn ChatGPT conversation scrolling in Safari, with ThreadLight on at left and off at right" width="100%">
 </p>
 
-*With ThreadLight on, a 68-turn conversation renders as just its last 20 — scrolling stays quick, and the little pill tells you exactly what's live.*
-
-<p align="center">
-  <img src="docs/media/threadlight-off.gif" alt="Scrolling the same 68-turn ChatGPT conversation with ThreadLight disabled; the full thread is a longer, heavier scroll" width="100%">
-</p>
-
-*The same conversation with ThreadLight off: the whole thing loads, and it's a longer, heavier scroll.*
+*The same 68-turn conversation, scrolled at the same time. **Left:** ThreadLight on — trimmed to the last 20 turns, so it's light and quick. **Right:** off — the whole thread.*
 
 ## Why you might want it
 
