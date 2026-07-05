@@ -83,6 +83,10 @@ npm run sync:native   # build the extension and copy it into the Xcode project
 
 Then open `native/ThreadLight/ThreadLight.xcodeproj` and run the **ThreadLight (macOS)** scheme (or use `./script/build_and_run.sh`). The extension itself is TypeScript under `extension/src/`; the native wrapper is a standard Safari-web-extension app that just hosts it.
 
+## License
+
+The source is here for anyone to read, build, and modify. It's licensed under the [PolyForm Noncommercial License 1.0.0](LICENSE): free to use, modify, and share for any noncommercial purpose, with attribution. Commercial use isn't permitted without a separate agreement — [open an issue](https://github.com/jgassens/ThreadLight-GPT/issues) if that's something you need. (It's source-available rather than OSI-approved "open source," since that term specifically requires no field-of-use restrictions like this one.)
+
 ## A note on the name
 
 "ChatGPT" is a trademark of OpenAI. ThreadLight is an independent, unofficial tool that happens to work with ChatGPT's web interface; it's referenced here only to describe what the extension is for. If OpenAI changes how the site loads conversations, ThreadLight may need an update to keep up.
