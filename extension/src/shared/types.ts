@@ -240,8 +240,10 @@ export interface ThreadLightDiagnosticEventDetail {
   statusCode?: number;
   statusCodeClass?: ThreadLightDiagnosticStatusCodeClass;
   contentTypeKind?: ThreadLightDiagnosticContentTypeKind;
+  eventCount?: number;
   requestByteCount?: number;
   responseCharCount?: number;
+  maxDurationMs?: number;
   totalVisibleTurns?: number;
   keptVisibleTurns?: number;
   removedVisibleTurns?: number;

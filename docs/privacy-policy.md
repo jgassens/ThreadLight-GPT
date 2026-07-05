@@ -8,6 +8,8 @@ ThreadLight stores local settings such as whether the extension is enabled and h
 
 ThreadLight includes an optional Diagnostics mode for troubleshooting. Diagnostics are off by default, kept in memory for the current ChatGPT tab, and limited to sanitized timing, state, endpoint-type, DOM-count, and stall-duration metadata. Diagnostic logs do not include raw URLs, conversation IDs, headers, cookies, prompts, responses, or message text.
 
+When Diagnostics mode is on, ThreadLight also emits content-free diagnostic events in the ChatGPT tab so the extension can replay startup timing data. Those events are limited to bounded labels, counts, and durations, and do not include chat text, account data, cookies, URLs, or conversation IDs.
+
 ThreadLight can read and modify pages on `chatgpt.com` and `chat.openai.com` only so it can reduce how much of a recognized conversation response is rendered in the current tab. Unknown response shapes are passed through unchanged.
 
 Reloading ChatGPT restores the full conversation from ChatGPT's servers when trimming is disabled or suspended for that reload.

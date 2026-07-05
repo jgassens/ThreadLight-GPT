@@ -46,6 +46,9 @@ const PAGE_PROXY_MARKER = "threadlightProxyInjected";
 const MAIN_THREAD_STALL_THRESHOLD_MS = 250;
 const MAIN_THREAD_STALL_MIN_REPORT_INTERVAL_MS = 1000;
 const ENVIRONMENT_SAMPLE_INTERVAL_MS = 5000;
+const ENVIRONMENT_SAMPLE_HEARTBEAT_MS = 30000;
+const ENVIRONMENT_SAMPLE_NODE_CHANGE_RATIO = 0.05;
+const LONGTASK_COALESCE_WINDOW_MS = 1000;
 const PENDING_DIAGNOSTICS_LIMIT = 300;
 let currentSettings: ThreadLightSettingsV1 | undefined;
 let domPruningSuspendedForFullReload = false;
@@ -54,12 +57,28 @@ let stallSamplerHandle: number | undefined;
 let lastAnimationFrameTime: number | undefined;
 let lastStallReportAt = 0;
 let environmentSampleHandle: number | undefined;
+let lastEnvironmentSample: EnvironmentSample | undefined;
+let lastEnvironmentSampleAt: number | undefined;
 let longTaskObserver: PerformanceObserver | undefined;
+let longTaskFlushHandle: number | undefined;
+let pendingLongTaskSummary: LongTaskSummary | undefined;
 // Two independent status sources: the page proxy (trims conversation JSON before render)
 // and the DOM pruner (hides already-rendered turns). The pill shows whichever is actively
 // trimming so the count reflects what is really on screen.
 let proxyStatus: ThreadLightStatusEventDetail | undefined;
 let domStatus: ThreadLightStatusEventDetail | undefined;
+
+interface EnvironmentSample {
+  totalDomNodes: number;
+  totalDomTurns: number;
+  hiddenDomTurns: number;
+}
+
+interface LongTaskSummary {
+  eventCount: number;
+  maxDurationMs: number;
+  startedAt: number;
+}
 
 function ensureContentStyles(): void {
   if (document.getElementById(STYLE_ID)) {
@@ -127,9 +146,59 @@ function flushPendingDiagnostics(): void {
   pending.forEach(storeIncomingDiagnostic);
 }
 
+function nowMs(): number {
+  return typeof globalThis.performance?.now === "function"
+    ? globalThis.performance.now()
+    : Date.now();
+}
+
+function readEnvironmentSample(): EnvironmentSample {
+  return {
+    totalDomNodes: document.getElementsByTagName("*").length,
+    totalDomTurns: document.querySelectorAll(CHATGPT_TURN_SELECTOR).length,
+    hiddenDomTurns: document.querySelectorAll(`.${THREADLIGHT_HIDDEN_TURN_CLASS}`).length
+  };
+}
+
+function sampleChangedMeaningfully(sample: EnvironmentSample): boolean {
+  if (lastEnvironmentSample === undefined) {
+    return true;
+  }
+
+  if (
+    sample.totalDomTurns !== lastEnvironmentSample.totalDomTurns ||
+    sample.hiddenDomTurns !== lastEnvironmentSample.hiddenDomTurns
+  ) {
+    return true;
+  }
+
+  const previousNodes = lastEnvironmentSample.totalDomNodes;
+  if (previousNodes === 0) {
+    return sample.totalDomNodes !== 0;
+  }
+
+  return (
+    Math.abs(sample.totalDomNodes - previousNodes) / previousNodes >=
+    ENVIRONMENT_SAMPLE_NODE_CHANGE_RATIO
+  );
+}
+
+function environmentSampleHeartbeatDue(monotonicTime: number): boolean {
+  return (
+    lastEnvironmentSampleAt === undefined ||
+    monotonicTime - lastEnvironmentSampleAt >= ENVIRONMENT_SAMPLE_HEARTBEAT_MS
+  );
+}
+
 function collectEnvironmentSample(): void {
   const settings = currentSettings;
   if (!settings?.debug) {
+    return;
+  }
+
+  const sample = readEnvironmentSample();
+  const monotonicTime = nowMs();
+  if (!sampleChangedMeaningfully(sample) && !environmentSampleHeartbeatDue(monotonicTime)) {
     return;
   }
 
@@ -141,12 +210,64 @@ function collectEnvironmentSample(): void {
       event: "environment-sample",
       state: "active",
       reason: "environment-sample",
-      totalDomNodes: document.getElementsByTagName("*").length,
-      totalDomTurns: document.querySelectorAll(CHATGPT_TURN_SELECTOR).length,
-      hiddenDomTurns: document.querySelectorAll(`.${THREADLIGHT_HIDDEN_TURN_CLASS}`).length
+      totalDomNodes: sample.totalDomNodes,
+      totalDomTurns: sample.totalDomTurns,
+      hiddenDomTurns: sample.hiddenDomTurns
     },
     settings
   );
+  lastEnvironmentSample = sample;
+  lastEnvironmentSampleAt = monotonicTime;
+}
+
+function flushLongTaskDiagnostics(): void {
+  if (longTaskFlushHandle !== undefined) {
+    window.clearTimeout(longTaskFlushHandle);
+    longTaskFlushHandle = undefined;
+  }
+
+  const summary = pendingLongTaskSummary;
+  pendingLongTaskSummary = undefined;
+  const settings = currentSettings;
+  if (!settings?.debug || summary === undefined) {
+    return;
+  }
+
+  storeContentDiagnostic(
+    {
+      diagnosticSource: "content",
+      level: "warn",
+      phase: "performance",
+      event: "longtask-observed",
+      state: "active",
+      reason: "longtask",
+      durationMs: summary.maxDurationMs,
+      maxDurationMs: summary.maxDurationMs,
+      eventCount: summary.eventCount,
+      elapsedMs: Math.max(0, nowMs() - summary.startedAt)
+    },
+    settings
+  );
+}
+
+function queueLongTaskDiagnostic(durationMs: number): void {
+  const boundedDuration = Math.max(0, durationMs);
+  if (pendingLongTaskSummary === undefined) {
+    pendingLongTaskSummary = {
+      eventCount: 0,
+      maxDurationMs: 0,
+      startedAt: nowMs()
+    };
+  }
+
+  pendingLongTaskSummary.eventCount += 1;
+  pendingLongTaskSummary.maxDurationMs = Math.max(
+    pendingLongTaskSummary.maxDurationMs,
+    boundedDuration
+  );
+  if (longTaskFlushHandle === undefined) {
+    longTaskFlushHandle = window.setTimeout(flushLongTaskDiagnostics, LONGTASK_COALESCE_WINDOW_MS);
+  }
 }
 
 function stopDiagnosticsSamplers(): void {
@@ -158,9 +279,16 @@ function stopDiagnosticsSamplers(): void {
     window.clearInterval(environmentSampleHandle);
     environmentSampleHandle = undefined;
   }
+  if (longTaskFlushHandle !== undefined) {
+    window.clearTimeout(longTaskFlushHandle);
+    longTaskFlushHandle = undefined;
+  }
+  pendingLongTaskSummary = undefined;
   longTaskObserver?.disconnect();
   longTaskObserver = undefined;
   lastAnimationFrameTime = undefined;
+  lastEnvironmentSample = undefined;
+  lastEnvironmentSampleAt = undefined;
 }
 
 function handleAnimationFrame(timestamp: number): void {
@@ -168,6 +296,12 @@ function handleAnimationFrame(timestamp: number): void {
   if (!settings?.debug) {
     stallSamplerHandle = undefined;
     lastAnimationFrameTime = undefined;
+    return;
+  }
+
+  if (document.hidden) {
+    lastAnimationFrameTime = undefined;
+    stallSamplerHandle = window.requestAnimationFrame(handleAnimationFrame);
     return;
   }
 
@@ -195,6 +329,13 @@ function handleAnimationFrame(timestamp: number): void {
 
   lastAnimationFrameTime = timestamp;
   stallSamplerHandle = window.requestAnimationFrame(handleAnimationFrame);
+}
+
+function handleVisibilityChange(): void {
+  lastAnimationFrameTime = undefined;
+  if (!document.hidden && currentSettings?.debug && stallSamplerHandle === undefined) {
+    startStallSampler();
+  }
 }
 
 function startStallSampler(): void {
@@ -231,20 +372,7 @@ function startLongTaskObserver(): void {
       if (!settings?.debug) {
         return;
       }
-      list.getEntries().forEach((entry) => {
-        storeContentDiagnostic(
-          {
-            diagnosticSource: "content",
-            level: "warn",
-            phase: "performance",
-            event: "longtask-observed",
-            state: "active",
-            reason: "longtask",
-            durationMs: entry.duration
-          },
-          settings
-        );
-      });
+      list.getEntries().forEach((entry) => queueLongTaskDiagnostic(entry.duration));
     });
     longTaskObserver.observe({ type: "longtask", buffered: true });
   } catch {
@@ -629,6 +757,7 @@ async function initContent(): Promise<void> {
   window.addEventListener(THREADLIGHT_REQUEST_CONFIG_EVENT, handleConfigRequest);
   window.addEventListener(THREADLIGHT_NAVIGATION_EVENT, handleNavigationEvent);
   window.addEventListener("message", handleWindowMessage);
+  document.addEventListener("visibilitychange", handleVisibilityChange);
   installDiagnosticsMessageListener();
 
   const settings = await getSettings();
@@ -684,6 +813,29 @@ async function initContent(): Promise<void> {
       requestDiagnosticReplay();
     }
   });
+}
+
+const contentDiagnosticsForTests = {
+  collectEnvironmentSample,
+  flushLongTaskDiagnostics,
+  handleAnimationFrame,
+  handleVisibilityChange,
+  queueLongTaskDiagnostic,
+  resetSamplerState: () => {
+    stopDiagnosticsSamplers();
+    lastStallReportAt = 0;
+  },
+  setCurrentSettings: (settings: ThreadLightSettingsV1 | undefined) => {
+    currentSettings = settings;
+  }
+};
+
+if (typeof process !== "undefined" && process.env.NODE_ENV === "test") {
+  (
+    globalThis as typeof globalThis & {
+      __THREADLIGHT_CONTENT_DIAGNOSTICS_FOR_TESTS__?: typeof contentDiagnosticsForTests;
+    }
+  ).__THREADLIGHT_CONTENT_DIAGNOSTICS_FOR_TESTS__ = contentDiagnosticsForTests;
 }
 
 void initContent();

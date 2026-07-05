@@ -209,8 +209,10 @@ const DIAGNOSTIC_DETAIL_KEYS = new Set([
   "statusCode",
   "statusCodeClass",
   "contentTypeKind",
+  "eventCount",
   "requestByteCount",
   "responseCharCount",
+  "maxDurationMs",
   "totalVisibleTurns",
   "keptVisibleTurns",
   "removedVisibleTurns",
@@ -397,8 +399,10 @@ export function sanitizeDiagnostic(value: unknown): ThreadLightDiagnosticEventDe
   const numberKeys = [
     "durationMs",
     "elapsedMs",
+    "eventCount",
     "requestByteCount",
     "responseCharCount",
+    "maxDurationMs",
     "totalVisibleTurns",
     "keptVisibleTurns",
     "removedVisibleTurns",
@@ -518,6 +522,12 @@ function consolePayload(detail: ThreadLightDiagnosticEventDetail): Record<string
   }
   if (detail.responseCharCount !== undefined) {
     payload.responseCharCount = detail.responseCharCount;
+  }
+  if (detail.eventCount !== undefined) {
+    payload.eventCount = detail.eventCount;
+  }
+  if (detail.maxDurationMs !== undefined) {
+    payload.maxDurationMs = detail.maxDurationMs;
   }
   if (detail.totalVisibleTurns !== undefined) {
     payload.totalVisibleTurns = detail.totalVisibleTurns;

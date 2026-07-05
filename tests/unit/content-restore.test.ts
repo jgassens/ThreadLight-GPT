@@ -29,6 +29,7 @@ function installDomGlobals(): Map<string, Listener[]> {
 
   vi.stubGlobal("CustomEvent", TestCustomEvent);
   vi.stubGlobal("document", {
+    addEventListener: vi.fn(),
     createElement: vi.fn(() => ({ id: "", textContent: "" })),
     documentElement: {
       append: vi.fn(),
