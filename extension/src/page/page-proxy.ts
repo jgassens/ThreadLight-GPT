@@ -42,17 +42,23 @@ function isJsonResponse(response: Response): boolean {
   return contentType.toLowerCase().includes("json");
 }
 
-export function createModifiedJsonResponse(original: Response, body: unknown): Response {
+// Rebuild a Response around a body string we already hold. The original headers are kept except
+// content-length/content-encoding, which describe the original encoded bytes, not this body.
+function createRewrappedResponse(original: Response, bodyText: string): Response {
   const headers = new Headers(original.headers);
   headers.delete("content-length");
   headers.delete("content-encoding");
   headers.set("content-type", "application/json");
 
-  return new Response(JSON.stringify(body), {
+  return new Response(bodyText, {
     status: original.status,
     statusText: original.statusText,
     headers
   });
+}
+
+export function createModifiedJsonResponse(original: Response, body: unknown): Response {
+  return createRewrappedResponse(original, JSON.stringify(body));
 }
 
 export async function rewriteConversationResponse(
@@ -73,7 +79,7 @@ export async function rewriteConversationResponse(
     };
   }
 
-  if (!isJsonResponse(response)) {
+  if (!isJsonResponse(response) || !response.ok || response.status === 204) {
     return {
       response,
       status: makeThreadLightStatusDetail({
@@ -85,13 +91,33 @@ export async function rewriteConversationResponse(
     };
   }
 
+  // Read the original body exactly once instead of response.clone(): WebKit's clone() tees the
+  // body stream, and on very large conversations the never-consumed original branch applies
+  // backpressure that stalls the read — the page's fetch then never resolves (observed as a
+  // multi-minute hang on huge threads). With the bytes in hand, every path below returns a
+  // rebuilt Response, so nothing downstream depends on the consumed original.
+  let bodyText: string;
   try {
-    const data = (await response.clone().json()) as unknown;
+    bodyText = await response.text();
+  } catch {
+    return {
+      response,
+      status: makeThreadLightStatusDetail({
+        settings,
+        state: "error",
+        recognized: false,
+        reason: "error"
+      })
+    };
+  }
+
+  try {
+    const data = JSON.parse(bodyText) as unknown;
     const trimResult = trimConversationData(data, effectiveKeepLastTurns(settings));
     const status = statusFromTrimResult(trimResult, settings);
 
     if (trimResult.kind !== "trimmed") {
-      return { response, status };
+      return { response: createRewrappedResponse(response, bodyText), status };
     }
 
     return {
@@ -100,7 +126,7 @@ export async function rewriteConversationResponse(
     };
   } catch {
     return {
-      response,
+      response: createRewrappedResponse(response, bodyText),
       status: makeThreadLightStatusDetail({
         settings,
         state: "error",
