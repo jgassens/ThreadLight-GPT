@@ -2,9 +2,9 @@
 
 **Keep long ChatGPT threads fast in Safari.**
 
-If you spend all day in one giant ChatGPT conversation, you've probably watched Safari slowly grind to a halt — typing lags a beat behind, scrolling stutters, the fans spin up, and the tab starts eating memory like it's a full-time job. That's because ChatGPT keeps *every* message in that thread rendered in the page. A few hundred turns of that and your browser is doing a mountain of pointless work just to show you the last thing the model said.
+If you spend all day in a single long ChatGPT conversation, you've likely noticed Safari gradually slowing down — typing delays, scrolling hiccups, fans whirring louder, and the tab consuming more memory. This happens because ChatGPT renders *every* message in the thread directly on the page. After hundreds of turns, your browser is burdened with unnecessary rendering work just to display the most recent response.
 
-ThreadLight fixes that. It's a small, local-only Safari extension that keeps only your most recent turns live in the page and quietly sets the older ones aside. Your full conversation is still safe on ChatGPT's servers — ThreadLight never deletes anything — it just stops Safari from re-rendering all of it every time you press a key.
+ThreadLight addresses this by being a simple, local Safari extension that keeps only your latest turns visible on the page, while quietly setting older ones aside. Your entire conversation remains stored securely on ChatGPT's servers — ThreadLight never deletes any data — it simply prevents Safari from re-rendering all past messages each time you press a key.
 
 > Unofficial project. Not affiliated with, or endorsed by, OpenAI.
 
@@ -27,8 +27,8 @@ ThreadLight fixes that. It's a small, local-only Safari extension that keeps onl
 
 Two mechanisms, working together:
 
-1. **Trim on load.** When you open a conversation, ChatGPT downloads the entire thing as JSON before it draws anything. ThreadLight intercepts that response *inside your browser* and hands the page only the last N turns — so a 300-message thread renders like a 20-message one. The trimming is purely local, and the full conversation stays untouched on ChatGPT's servers.
-2. **Prune as you go.** For messages that are already on screen, a lightweight pass hides the oldest ones once a thread gets long. It's deliberate about it: it never touches the reply that's currently streaming, and it won't fight your scrolling or ChatGPT's own auto-scroll.
+1. **Trim on load:** When opening a conversation, ChatGPT initially downloads the full thread as JSON before displaying it. ThreadLight intercepts this response *inside your browser* and provides only the last N turns to the page, making a 300-message thread appear as a 20-message chat. This trimming process is entirely local, with the full conversation remaining unaltered on ChatGPT's servers.
+2. **Prune as you go.** For messages displayed on the screen, a lightweight process periodically hides the oldest messages as the conversation grows long. It does this intentionally: it never removes the message currently streaming in real time, and it doesn't interfere with your or ChatGPT's automatic scrolling.
 
 You control how much stays live with a slider (5–100 turns). Need the whole thing back for a minute? Hit **Restore full thread on next reload** and ThreadLight steps aside for one page load.
 
@@ -47,9 +47,7 @@ Whatever you change is saved locally in the extension. There's nothing else to c
 
 ## Privacy
 
-This is the part I care about most, so, plainly:
-
-- Everything ThreadLight does happens **on your Mac, inside Safari.** It looks at the conversation the page already loaded so it can decide what to hide — and that's where it ends. None of your chat content is ever sent anywhere or written to disk by ThreadLight.
+- All ThreadLight operations occur **locally on your Mac within Safari.** It examines the loaded conversation on the page to determine what to hide, then stops. At no point is your chat content transmitted elsewhere or saved to disk by ThreadLight.
 - **No analytics, no telemetry, no servers, no remote config.** There is nothing for it to phone home to.
 - It only runs on `chatgpt.com` and `chat.openai.com`, and asks for no other access.
 - Your settings are stored locally on your machine.
@@ -69,11 +67,10 @@ ThreadLight is a Safari web extension, which on macOS means it ships inside a ti
 The host app does nothing but carry the extension — once it's enabled in Safari, you can quit it. Requires a Mac running a recent version of Safari.
 
 ## Is it for you?
+I dunno, try it out and see how it goes. It works best if you're active in long-running threads—like research logs, ongoing projects, or that one chat you've been updating for months. If your conversations tend to be short, you probably won't see much change.
 
-Honestly, try it and see. It helps most if you live in long-running threads — research logs, ongoing projects, that one chat you've been feeding for months. If your conversations are usually short, you probably won't notice much difference.
-
-It's still early software, and Safari extensions can be quirky from one version to the next. If something feels off — a thread that won't trim, a scroll that jumps, a message that vanishes when it shouldn't — I'd really like to hear about it. [Open an issue](https://github.com/jgassens/ThreadLight-GPT/issues) with what you saw and roughly how long the thread was. You never need to share the actual conversation.
-
+Since this is still early software and Safari extensions can be unpredictable across different versions, please let me know if you notice anything unusual — like a thread that won't trim, a scroll that jumps, or a message that disappears unexpectedly. Share what you observed and an estimate of the thread's length. There's no need to share the actual conversation.
+[Open an issue](https://github.com/jgassens/ThreadLight-GPT/issues)
 ## Building from source
 
 Prefer to build it yourself?
