@@ -12,6 +12,45 @@ const nativeResourceRoot = path.join(
   "Resources"
 );
 const iconSizes = [16, 32, 48, 128, 256, 512];
+const manifestFiles = ["manifest.json", "manifest.safari.json"];
+
+function isRecord(value) {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+function iconPathsFromField(value) {
+  if (typeof value === "string") {
+    return [value];
+  }
+
+  if (!isRecord(value)) {
+    return [];
+  }
+
+  return Object.values(value).filter((entry) => typeof entry === "string");
+}
+
+function collectManifestIconPaths(manifest) {
+  const iconPaths = new Set();
+
+  for (const iconPath of iconPathsFromField(manifest.icons)) {
+    iconPaths.add(iconPath);
+  }
+
+  if (isRecord(manifest.action)) {
+    for (const iconPath of iconPathsFromField(manifest.action.default_icon)) {
+      iconPaths.add(iconPath);
+    }
+  }
+
+  return [...iconPaths].sort();
+}
+
+function assertSafeRelativeResourcePath(relativePath, manifestFile) {
+  if (path.isAbsolute(relativePath) || relativePath.split(/[\\/]+/).includes("..")) {
+    throw new Error(`${manifestFile} references an unsafe resource path: ${relativePath}`);
+  }
+}
 
 async function assertSameFile(relativePath) {
   const source = path.join(extensionRoot, relativePath);
@@ -51,13 +90,31 @@ async function assertNativeIconSet() {
   await Promise.all(expectedIcons.map((name) => assertSameFile(path.join("icons", name))));
 }
 
+async function assertManifestIconReferences(manifestFile) {
+  const manifest = JSON.parse(await readFile(path.join(extensionRoot, manifestFile), "utf8"));
+
+  await Promise.all(
+    collectManifestIconPaths(manifest).map(async (relativePath) => {
+      assertSafeRelativeResourcePath(relativePath, manifestFile);
+
+      try {
+        await assertSameFile(relativePath);
+      } catch (error) {
+        throw new Error(
+          `${manifestFile} references a missing or stale icon resource: ${relativePath}\n${error.message}`
+        );
+      }
+    })
+  );
+}
+
 await Promise.all([
   assertSameFolder("dist"),
   assertSameFolder("popup"),
   assertSameFolder("src"),
-  assertSameFile("manifest.json"),
-  assertSameFile("manifest.safari.json"),
-  assertNativeIconSet()
+  ...manifestFiles.map((manifestFile) => assertSameFile(manifestFile)),
+  assertNativeIconSet(),
+  ...manifestFiles.map((manifestFile) => assertManifestIconReferences(manifestFile))
 ]);
 
 console.log(`Native Safari extension resources match ${extensionRoot}`);

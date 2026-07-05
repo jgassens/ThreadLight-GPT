@@ -20,6 +20,7 @@
 - Native app copy is branded and honest.
 - Native app explains how to enable the Safari extension.
 - Native app includes privacy summary and support link.
+- After installing a signed app, `npm run check:safari-registration -- --expected-app /Applications/ThreadLight.app` passes and PlugInKit points at `/Applications/ThreadLight.app`, not a temporary archive path.
 
 ## Manual QA Gate
 
@@ -64,6 +65,7 @@ Current local status:
 - 2026-07-05: `dev/builds/release/0.1.16-16-20260705T181005Z/ThreadLight-0.1.16-16-notarized.dmg` is signed, notarized, stapled, Gatekeeper-accepted as `Notarized Developer ID`, and `hdiutil verify` passes.
 - 2026-07-05: Notary submission `964bbf77-c295-4b4c-91bd-6fb05effe204` returned `Accepted`.
 - 2026-07-05: The stapled DMG SHA-256 is `afd729db94167819470f74acf1c58f655354eb15099a3fe3570fd931f33a19bc`.
+- 2026-07-05: A stale PlugInKit registration pointing at a deleted `/private/tmp/.../InstallationBuildProductsLocation/.../ThreadLight.app` caused Safari to show a blank extension icon and report `icons/icon-128.png` missing. Installing the verified export to `/Applications/ThreadLight.app`, registering its `.appex`, and running `npm run check:safari-registration -- --expected-app /Applications/ThreadLight.app` confirmed the live registration now points at `/Applications`.
 - 2026-07-03: `npm run verify` passes.
 - 2026-07-03: `npm run package:safari:zip` passes and produces a runtime-only zip with no `__MACOSX`, `.ts`, README, or `.DS_Store` entries.
 - 2026-07-03: Xcode 26.6 archives `ThreadLight (macOS)` as version `0.1.10`, build `10`, universal `x86_64 arm64`.

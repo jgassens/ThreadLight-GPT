@@ -133,6 +133,7 @@ Current local result:
 - 2026-07-05: `codesign --verify --deep --strict --verbose=4 /private/tmp/threadlight-release-0.1.16-16-20260705T181005Z/export/ThreadLight.app` passes when run with keychain access.
 - 2026-07-05: `dev/builds/release/0.1.16-16-20260705T181005Z/ThreadLight-0.1.16-16-notarized.dmg` was accepted by Apple notarization, stapled, validated, accepted by Gatekeeper as `Notarized Developer ID`, and verified by `hdiutil verify`.
 - 2026-07-05: Notary submission `964bbf77-c295-4b4c-91bd-6fb05effe204` returned `Accepted`; the stapled DMG SHA-256 is `afd729db94167819470f74acf1c58f655354eb15099a3fe3570fd931f33a19bc`.
+- 2026-07-05: Safari briefly showed ThreadLight with a blank document icon because PlugInKit was registered to a deleted temporary archive path. The verified export was installed to `/Applications/ThreadLight.app`, its `.appex` was registered, and `npm run check:safari-registration -- --expected-app /Applications/ThreadLight.app` confirmed the live extension bundle contains the manifest icon resources.
 - 2026-07-03: `ThreadLight (macOS)` archives with Xcode 26.6 as version `0.1.10`, build `10`, universal `x86_64 arm64`.
 - 2026-07-03: the archive path was `/private/tmp/ThreadLight-0.1.10-10-codex.xcarchive`.
 - 2026-07-03: Developer ID export succeeded at `/private/tmp/threadlight-developer-id-export-codex/ThreadLight.app`.
@@ -144,6 +145,27 @@ Current local result:
 - 2026-07-03: App Store Connect export from the fresh synced archive still fails locally with `No Accounts`, no `Mac Installer Distribution` signing certificate, and no profiles for `com.jeremiahgassensmith.threadlight`.
 
 Xcode also reports a CoreSimulator version mismatch. That does not block the macOS build, but iOS Simulator testing should wait until the local CoreSimulator/Xcode install is repaired.
+
+## Safari Extension Registration Check
+
+After installing the signed app, check the exact Safari extension bundle macOS registered:
+
+```bash
+npm run check:safari-registration -- --expected-app /Applications/ThreadLight.app
+```
+
+The command should report a stable path under:
+
+```text
+/Applications/ThreadLight.app/Contents/PlugIns/ThreadLight Extension.appex
+```
+
+If it reports a `/private/tmp/.../InstallationBuildProductsLocation/...` path, Safari is looking at an archive intermediate rather than the installed app. Install the verified export or DMG copy into `/Applications`, then register the extension bundle:
+
+```bash
+pluginkit -a "/Applications/ThreadLight.app/Contents/PlugIns/ThreadLight Extension.appex"
+npm run check:safari-registration -- --expected-app /Applications/ThreadLight.app
+```
 
 ## Release Archive And Notarized DMG Commands
 

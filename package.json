@@ -10,6 +10,7 @@
     "build:safari": "node scripts/build-extension.mjs",
     "build:dev": "node scripts/build-extension.mjs --target=safari --dev",
     "check:native": "node scripts/check-native-resources.mjs",
+    "check:safari-registration": "node scripts/check-safari-extension-registration.mjs",
     "generate:app-icons": "node scripts/generate-native-app-icons.mjs",
     "sync:native": "node scripts/sync-native-resources.mjs",
     "format": "prettier --write .",
