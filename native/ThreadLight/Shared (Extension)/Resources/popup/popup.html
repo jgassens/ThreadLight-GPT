@@ -39,8 +39,38 @@
           <input id="collapse-long-user-messages" type="checkbox" />
         </label>
 
+        <label class="switch-row">
+          <span>Diagnostics mode</span>
+          <input id="diagnostics-mode" type="checkbox" />
+        </label>
+
         <button id="restore-full-thread" type="button">Restore full thread on next reload</button>
       </form>
+
+      <section class="diagnostics-panel" aria-labelledby="diagnostics-title">
+        <div class="diagnostics-header">
+          <h2 id="diagnostics-title">Diagnostics</h2>
+          <button id="refresh-diagnostics" class="secondary-button" type="button">Refresh</button>
+        </div>
+        <p id="diagnostics-state" aria-live="polite">Diagnostics are off.</p>
+        <pre
+          id="diagnostics-log"
+          class="diagnostics-log"
+          aria-label="ThreadLight diagnostics log"
+        ></pre>
+        <div class="diagnostics-actions">
+          <button id="copy-diagnostics-report" class="secondary-button" type="button">
+            Copy full report
+          </button>
+          <button id="copy-diagnostics-summary" class="secondary-button" type="button">
+            Copy summary
+          </button>
+          <button id="copy-diagnostics-jsonl" class="secondary-button" type="button">
+            Copy JSONL
+          </button>
+          <button id="clear-diagnostics" class="secondary-button" type="button">Clear</button>
+        </div>
+      </section>
 
       <footer class="popup-footer">
         <a href="#privacy" id="privacy-link">Privacy</a>

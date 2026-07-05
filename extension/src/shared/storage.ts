@@ -1,13 +1,18 @@
 import {
+  THREADLIGHT_CLEAR_DIAGNOSTICS_MESSAGE,
+  THREADLIGHT_GET_DIAGNOSTICS_MESSAGE,
   SETTINGS_STORAGE_KEY,
   THREADLIGHT_GET_SETTINGS_MESSAGE,
+  THREADLIGHT_TAB_CLEAR_DIAGNOSTICS_MESSAGE,
+  THREADLIGHT_TAB_GET_DIAGNOSTICS_MESSAGE,
   THREADLIGHT_UPDATE_SETTINGS_MESSAGE
 } from "./constants";
 import { DEFAULT_SETTINGS, isRecord, mergeSettings, normalizeSettings } from "./settings";
 import type {
   ThreadLightRuntimeMessage,
   ThreadLightRuntimeResponse,
-  ThreadLightSettingsV1
+  ThreadLightSettingsV1,
+  ThreadLightTabMessage
 } from "./types";
 import { isChatGptUrl } from "./url-matcher";
 
@@ -71,6 +76,15 @@ interface ExtensionTabs {
     tabId: number | undefined,
     reloadProperties: { bypassCache?: boolean } | undefined,
     callback: () => void
+  ): void;
+  sendMessage?(
+    tabId: number,
+    message: ThreadLightTabMessage
+  ): Promise<ThreadLightRuntimeResponse> | ThreadLightRuntimeResponse | void;
+  sendMessage?(
+    tabId: number,
+    message: ThreadLightTabMessage,
+    callback: (response: ThreadLightRuntimeResponse) => void
   ): void;
 }
 
@@ -332,6 +346,74 @@ export async function reloadTab(tabId: number): Promise<boolean> {
       resolve(false);
     }
   });
+}
+
+export async function sendTabMessage(
+  tabId: number,
+  message: ThreadLightTabMessage
+): Promise<ThreadLightRuntimeResponse> {
+  const tabs = getExtensionApi()?.tabs;
+  if (!tabs?.sendMessage) {
+    return { ok: false, reason: "content-script-unavailable", diagnosticsState: "content-script-unavailable" };
+  }
+
+  try {
+    const maybeResult = tabs.sendMessage(tabId, message);
+    if (isPromiseLike<ThreadLightRuntimeResponse>(maybeResult)) {
+      return await maybeResult;
+    }
+    if (isRecord(maybeResult) && typeof maybeResult.ok === "boolean") {
+      return maybeResult as ThreadLightRuntimeResponse;
+    }
+  } catch {
+    // Chrome-style callback APIs may throw when called without a callback.
+  }
+
+  return new Promise((resolve) => {
+    try {
+      tabs.sendMessage?.(tabId, message, (response) => {
+        const lastError = runtimeLastErrorMessage();
+        if (lastError !== undefined) {
+          resolve({
+            ok: false,
+            reason: "content-script-unavailable",
+            diagnosticsState: "content-script-unavailable"
+          });
+          return;
+        }
+        resolve(
+          isRecord(response) && typeof response.ok === "boolean"
+            ? (response as ThreadLightRuntimeResponse)
+            : {
+                ok: false,
+                reason: "content-script-unavailable",
+                diagnosticsState: "content-script-unavailable"
+              }
+        );
+      });
+    } catch {
+      resolve({
+        ok: false,
+        reason: "content-script-unavailable",
+        diagnosticsState: "content-script-unavailable"
+      });
+    }
+  });
+}
+
+export function isDiagnosticsRuntimeMessage(message: ThreadLightRuntimeMessage): boolean {
+  return (
+    message.type === THREADLIGHT_GET_DIAGNOSTICS_MESSAGE ||
+    message.type === THREADLIGHT_CLEAR_DIAGNOSTICS_MESSAGE
+  );
+}
+
+export function isDiagnosticsTabMessage(message: unknown): message is ThreadLightTabMessage {
+  return (
+    isRecord(message) &&
+    (message.type === THREADLIGHT_TAB_GET_DIAGNOSTICS_MESSAGE ||
+      message.type === THREADLIGHT_TAB_CLEAR_DIAGNOSTICS_MESSAGE)
+  );
 }
 
 export function subscribeSettingsChanges(

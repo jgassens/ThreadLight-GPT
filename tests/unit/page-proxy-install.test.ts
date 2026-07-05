@@ -1,6 +1,11 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { THREADLIGHT_CONFIG_EVENT } from "../../extension/src/shared/constants";
+import {
+  THREADLIGHT_CONFIG_EVENT,
+  THREADLIGHT_DIAGNOSTIC_EVENT,
+  THREADLIGHT_DIAGNOSTIC_REPLAY_REQUEST_EVENT
+} from "../../extension/src/shared/constants";
 import { DEFAULT_SETTINGS, settingsToJson } from "../../extension/src/shared/settings";
+import type { ThreadLightDiagnosticEventDetail } from "../../extension/src/shared/types";
 
 type Listener = (event: Event) => void;
 
@@ -100,5 +105,59 @@ describe("page proxy install", () => {
     fetchDeferred.resolve(response);
 
     await expect(fetchPromise).resolves.toBe(response);
+  });
+
+  it("records native fetch failures without replacing the original rejection", async () => {
+    const fetchError = new Error("synthetic fetch failure");
+    const nativeFetchMock = vi.fn(async () => {
+      throw fetchError;
+    });
+    installPageProxyGlobals(nativeFetchMock as unknown as typeof fetch);
+    const diagnostics: ThreadLightDiagnosticEventDetail[] = [];
+
+    vi.spyOn(console, "debug").mockImplementation(() => undefined);
+    vi.spyOn(console, "info").mockImplementation(() => undefined);
+    vi.spyOn(console, "warn").mockImplementation(() => undefined);
+    vi.spyOn(console, "error").mockImplementation(() => undefined);
+
+    await import("../../extension/src/page/page-proxy");
+
+    window.addEventListener(THREADLIGHT_DIAGNOSTIC_EVENT, (event) => {
+      if (event instanceof CustomEvent) {
+        diagnostics.push(event.detail as ThreadLightDiagnosticEventDetail);
+      }
+    });
+    window.dispatchEvent(
+      new CustomEvent(THREADLIGHT_CONFIG_EVENT, {
+        detail: settingsToJson({ ...DEFAULT_SETTINGS, debug: true })
+      })
+    );
+
+    await expect(window.fetch("https://chatgpt.com/backend-api/conversation/abc")).rejects.toBe(
+      fetchError
+    );
+    expect(diagnostics.map((entry) => entry.event)).toContain("fetch-failed");
+  });
+
+  it("replays startup diagnostics that were emitted before the content listener attached", async () => {
+    const nativeFetch = vi.fn(async () => new Response("ok"));
+    installPageProxyGlobals(nativeFetch as unknown as typeof fetch);
+    const diagnostics: ThreadLightDiagnosticEventDetail[] = [];
+
+    vi.spyOn(console, "debug").mockImplementation(() => undefined);
+    vi.spyOn(console, "info").mockImplementation(() => undefined);
+
+    await import("../../extension/src/page/page-proxy");
+
+    window.addEventListener(THREADLIGHT_DIAGNOSTIC_EVENT, (event) => {
+      if (event instanceof CustomEvent) {
+        diagnostics.push(event.detail as ThreadLightDiagnosticEventDetail);
+      }
+    });
+    window.dispatchEvent(new CustomEvent(THREADLIGHT_DIAGNOSTIC_REPLAY_REQUEST_EVENT));
+
+    expect(diagnostics.map((entry) => entry.event)).toEqual(
+      expect.arrayContaining(["proxy-install", "main-world-active", "config-requested"])
+    );
   });
 });

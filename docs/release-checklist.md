@@ -56,6 +56,14 @@ Do not commit credentials, key IDs, private keys, or exported signing material.
 
 Current local status:
 
+- 2026-07-05: `npm run verify` passes for version `0.1.16`, build `16`.
+- 2026-07-05: `npm run package:safari:zip` passes and produces `packages/threadlight-extension.zip`.
+- 2026-07-05: Xcode 26.6 archives `ThreadLight (macOS)` as version `0.1.16`, build `16`, universal `x86_64 arm64`.
+- 2026-07-05: Developer ID export succeeds at `/private/tmp/threadlight-release-0.1.16-16-20260705T181005Z/export/ThreadLight.app`.
+- 2026-07-05: `codesign --verify --deep --strict --verbose=4 /private/tmp/threadlight-release-0.1.16-16-20260705T181005Z/export/ThreadLight.app` passes when run with keychain access.
+- 2026-07-05: `dev/builds/release/0.1.16-16-20260705T181005Z/ThreadLight-0.1.16-16-notarized.dmg` is signed, notarized, stapled, Gatekeeper-accepted as `Notarized Developer ID`, and `hdiutil verify` passes.
+- 2026-07-05: Notary submission `964bbf77-c295-4b4c-91bd-6fb05effe204` returned `Accepted`.
+- 2026-07-05: The stapled DMG SHA-256 is `afd729db94167819470f74acf1c58f655354eb15099a3fe3570fd931f33a19bc`.
 - 2026-07-03: `npm run verify` passes.
 - 2026-07-03: `npm run package:safari:zip` passes and produces a runtime-only zip with no `__MACOSX`, `.ts`, README, or `.DS_Store` entries.
 - 2026-07-03: Xcode 26.6 archives `ThreadLight (macOS)` as version `0.1.10`, build `10`, universal `x86_64 arm64`.

@@ -1,4 +1,5 @@
 import { CHATGPT_HOSTS } from "./constants";
+import type { ThreadLightDiagnosticEndpointKind } from "./types";
 
 const CHATGPT_HOST_SET = new Set<string>(CHATGPT_HOSTS);
 const MATCHED_ENDPOINTS = new Set(["conversation", "shared_conversation"]);
@@ -98,4 +99,39 @@ export function isConversationJsonRequest(
     return false;
   }
   return matchesConversationEndpoint(url, getRequestMethod(input, init));
+}
+
+export function diagnosticEndpointKind(
+  input: RequestInfo | URL,
+  init?: RequestInit,
+  baseUrl?: string
+): ThreadLightDiagnosticEndpointKind {
+  if (!mightBeConversationRequest(input)) {
+    return "unmatched";
+  }
+
+  const url = resolveRequestUrl(input, baseUrl);
+  if (!url || !CHATGPT_HOST_SET.has(url.hostname)) {
+    return "unmatched";
+  }
+
+  const parts = url.pathname.split("/").filter(Boolean);
+  const [apiPrefix, endpoint] = parts;
+  if (apiPrefix !== "backend-api") {
+    return "unmatched";
+  }
+
+  if (getRequestMethod(input, init) !== "GET") {
+    return "other-backend-api";
+  }
+
+  if (parts.length === 3 && endpoint === "conversation") {
+    return "conversation";
+  }
+
+  if (parts.length === 3 && endpoint === "shared_conversation") {
+    return "shared_conversation";
+  }
+
+  return "other-backend-api";
 }

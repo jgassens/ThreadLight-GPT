@@ -36,6 +36,12 @@ h1 {
   line-height: 1.2;
 }
 
+h2 {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.2;
+}
+
 p {
   margin: 0;
   color: var(--muted);
@@ -85,6 +91,15 @@ button {
   cursor: pointer;
 }
 
+.secondary-button {
+  min-height: 30px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  font-size: 12px;
+  font-weight: 600;
+}
+
 button:focus-visible,
 a:focus-visible,
 input:focus-visible {
@@ -105,4 +120,44 @@ input:focus-visible {
 .popup-footer a {
   color: var(--accent);
   text-decoration: none;
+}
+
+.diagnostics-panel {
+  display: grid;
+  gap: 10px;
+  padding: 12px 0 14px;
+  border-top: 1px solid var(--border);
+}
+
+.diagnostics-header {
+  display: grid;
+  grid-template-columns: 1fr 84px;
+  align-items: center;
+  gap: 8px;
+}
+
+.diagnostics-log {
+  min-height: 92px;
+  max-height: 160px;
+  margin: 0;
+  overflow: auto;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 8px;
+  background: var(--surface);
+  color: var(--text);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font:
+    11px/1.35 ui-monospace,
+    "SF Mono",
+    Menlo,
+    Consolas,
+    monospace;
+}
+
+.diagnostics-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
 }

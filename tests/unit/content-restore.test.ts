@@ -89,7 +89,9 @@ describe("content restore flow", () => {
         return vi.fn();
       }),
       updateSettings,
-      getExtensionVersion: vi.fn(() => "0.1.13")
+      getExtensionVersion: vi.fn(() => "0.1.13"),
+      addRuntimeMessageListener: vi.fn(),
+      isDiagnosticsTabMessage: vi.fn(() => false)
     }));
     vi.doMock("../../extension/src/content/dom-pruner", () => ({ setDomPruning }));
     vi.doMock("../../extension/src/content/status-pill", () => ({ updateStatusPill: vi.fn() }));
@@ -102,6 +104,7 @@ describe("content restore flow", () => {
 
     expect(setDomPruning).toHaveBeenLastCalledWith(
       expect.objectContaining({ enabled: false }),
+      expect.any(Function),
       expect.any(Function)
     );
 
@@ -124,6 +127,7 @@ describe("content restore flow", () => {
     storageListener?.(normalSettings);
     expect(setDomPruning).toHaveBeenLastCalledWith(
       expect.objectContaining({ enabled: false }),
+      expect.any(Function),
       expect.any(Function)
     );
 
@@ -134,6 +138,7 @@ describe("content restore flow", () => {
     );
     expect(setDomPruning).toHaveBeenLastCalledWith(
       expect.objectContaining({ enabled: true }),
+      expect.any(Function),
       expect.any(Function)
     );
   });

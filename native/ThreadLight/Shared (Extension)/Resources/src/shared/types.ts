@@ -49,12 +49,7 @@ export type TrimResult =
     };
 
 export type ThreadLightStatusState =
-  | "trimmed"
-  | "noop"
-  | "unrecognized"
-  | "disabled"
-  | "paused"
-  | "error";
+  "trimmed" | "noop" | "unrecognized" | "disabled" | "paused" | "error";
 
 export type ThreadLightStatusReason =
   | "trimmed"
@@ -82,6 +77,183 @@ export interface ThreadLightStatusEventDetail {
   reason?: ThreadLightStatusReason;
 }
 
+export type ThreadLightDiagnosticSource =
+  | "page-proxy"
+  | "page-inject"
+  | "content"
+  | "dom-pruner"
+  | "user-collapse"
+  | "background"
+  | "popup";
+
+export type ThreadLightDiagnosticLevel = "debug" | "info" | "warn" | "error";
+
+export type ThreadLightDiagnosticPhase =
+  | "startup"
+  | "config"
+  | "fetch"
+  | "response"
+  | "trim"
+  | "dom"
+  | "navigation"
+  | "restore"
+  | "settings"
+  | "diagnostics"
+  | "performance"
+  | "popup";
+
+export type ThreadLightDiagnosticEndpointKind =
+  "conversation" | "shared_conversation" | "other-backend-api" | "unmatched";
+
+export type ThreadLightDiagnosticState =
+  | "started"
+  | "pending"
+  | "finished"
+  | "accepted"
+  | "rejected"
+  | "trimmed"
+  | "noop"
+  | "unrecognized"
+  | "disabled"
+  | "paused"
+  | "error"
+  | "skipped"
+  | "applied"
+  | "deferred"
+  | "cleared"
+  | "timeout"
+  | "empty"
+  | "active";
+
+export type ThreadLightDiagnosticReason =
+  | ThreadLightStatusReason
+  | "config-timeout"
+  | "config-received"
+  | "native-fetch"
+  | "native-fetch-failed"
+  | "body-read"
+  | "body-read-failed"
+  | "body-read-slow"
+  | "json-parse"
+  | "json-parse-failed"
+  | "rewrapped"
+  | "modified"
+  | "streaming-branch"
+  | "within-limit"
+  | "below-trim-threshold"
+  | "no-visible-suffix"
+  | "not-object"
+  | "missing-mapping-or-current-node"
+  | "missing-or-cyclic-active-path"
+  | "fallback-injection"
+  | "main-world"
+  | "already-active"
+  | "settings-applied"
+  | "scrolling"
+  | "mutating"
+  | "signature-unchanged"
+  | "no-turns"
+  | "below-dom-threshold"
+  | "diagnostics-disabled"
+  | "content-script-unavailable"
+  | "page-not-ready"
+  | "chatgpt-tab-not-active"
+  | "old-build-mismatch"
+  | "restricted-page"
+  | "cleared"
+  | "malformed-diagnostic"
+  | "duplicate-diagnostic"
+  | "main-thread-stall"
+  | "environment-sample"
+  | "longtask"
+  | "unknown";
+
+export type ThreadLightDiagnosticEventName =
+  | "proxy-install"
+  | "main-world-active"
+  | "fallback-injection-used"
+  | "fallback-injection-skipped"
+  | "config-requested"
+  | "config-received"
+  | "config-wait-timeout"
+  | "fetch-matched"
+  | "fetch-start"
+  | "fetch-end"
+  | "fetch-failed"
+  | "body-read-start"
+  | "body-read-slow"
+  | "body-read-end"
+  | "body-read-failed"
+  | "json-parse-start"
+  | "json-parse-end"
+  | "json-parse-failed"
+  | "trim-start"
+  | "trim-result"
+  | "response-rewrite-start"
+  | "response-rewrite-end"
+  | "response-rewrapped"
+  | "response-modified"
+  | "restore-suspended-once"
+  | "fail-open"
+  | "content-init"
+  | "version-marker"
+  | "settings-applied"
+  | "proxy-ready-message"
+  | "status-event-accepted"
+  | "status-event-rejected"
+  | "diagnostic-event-rejected"
+  | "navigation-event"
+  | "dom-prune-scheduled"
+  | "dom-prune-deferred"
+  | "dom-prune-applied"
+  | "dom-prune-skipped"
+  | "user-collapse-mode"
+  | "diagnostics-cleared"
+  | "diagnostics-requested"
+  | "diagnostics-response"
+  | "main-thread-stall"
+  | "environment-sample"
+  | "longtask-observed"
+  | "popup-state";
+
+export type ThreadLightDiagnosticStatusCodeClass =
+  "1xx" | "2xx" | "3xx" | "4xx" | "5xx" | "unknown";
+
+export type ThreadLightDiagnosticContentTypeKind = "json" | "non-json" | "missing" | "unknown";
+
+export interface ThreadLightDiagnosticEventDetail {
+  source: "threadlight";
+  version: 1;
+  diagnosticSource: ThreadLightDiagnosticSource;
+  sourceSequence: number;
+  bufferSequence?: number;
+  level: ThreadLightDiagnosticLevel;
+  phase: ThreadLightDiagnosticPhase;
+  event: ThreadLightDiagnosticEventName;
+  at: number;
+  monotonicTime: number;
+  endpointKind?: ThreadLightDiagnosticEndpointKind;
+  state?: ThreadLightDiagnosticState;
+  reason?: ThreadLightDiagnosticReason;
+  durationMs?: number;
+  elapsedMs?: number;
+  statusCode?: number;
+  statusCodeClass?: ThreadLightDiagnosticStatusCodeClass;
+  contentTypeKind?: ThreadLightDiagnosticContentTypeKind;
+  requestByteCount?: number;
+  responseCharCount?: number;
+  totalVisibleTurns?: number;
+  keptVisibleTurns?: number;
+  removedVisibleTurns?: number;
+  totalNodesOnPath?: number;
+  keptNodes?: number;
+  totalDomNodes?: number;
+  totalDomTurns?: number;
+  keptDomTurns?: number;
+  hiddenDomTurns?: number;
+  keepLastTurns?: number;
+}
+
 export interface ThreadLightProxyReadyMessage {
   source: "threadlight";
   type: "threadlight-proxy-ready";
@@ -101,13 +273,49 @@ export interface ThreadLightUpdateSettingsMessage {
   patch: Partial<ThreadLightSettingsV1>;
 }
 
+export interface ThreadLightGetDiagnosticsMessage {
+  type: "threadlight-get-diagnostics";
+}
+
+export interface ThreadLightClearDiagnosticsMessage {
+  type: "threadlight-clear-diagnostics";
+}
+
 export type ThreadLightRuntimeMessage =
   | ThreadLightRestoreFullThreadMessage
   | ThreadLightGetSettingsMessage
-  | ThreadLightUpdateSettingsMessage;
+  | ThreadLightUpdateSettingsMessage
+  | ThreadLightGetDiagnosticsMessage
+  | ThreadLightClearDiagnosticsMessage;
+
+export interface ThreadLightTabGetDiagnosticsMessage {
+  type: "threadlight-tab-get-diagnostics";
+}
+
+export interface ThreadLightTabClearDiagnosticsMessage {
+  type: "threadlight-tab-clear-diagnostics";
+}
+
+export type ThreadLightTabMessage =
+  ThreadLightTabGetDiagnosticsMessage | ThreadLightTabClearDiagnosticsMessage;
+
+export type ThreadLightDiagnosticsState =
+  | "diagnostics-disabled"
+  | "no-active-chatgpt-tab"
+  | "content-script-unavailable"
+  | "page-restricted"
+  | "page-not-ready"
+  | "old-build-mismatch"
+  | "empty"
+  | "active"
+  | "cleared";
 
 export interface ThreadLightRuntimeResponse {
   ok: boolean;
   reason?: string;
   settings?: ThreadLightSettingsV1;
+  diagnosticsState?: ThreadLightDiagnosticsState;
+  diagnostics?: ThreadLightDiagnosticEventDetail[];
+  extensionVersion?: string;
+  pageVersion?: string;
 }

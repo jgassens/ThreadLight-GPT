@@ -7,6 +7,17 @@
     },
     {
       "idiom" : "universal",
+      "scale" : "1x",
+      "filename" : "icon-256-dark.png",
+      "appearances" : [
+        {
+          "appearance" : "luminosity",
+          "value" : "dark"
+        }
+      ]
+    },
+    {
+      "idiom" : "universal",
       "scale" : "2x"
     },
     {

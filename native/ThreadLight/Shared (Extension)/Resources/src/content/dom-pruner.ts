@@ -2,7 +2,12 @@ import {
   THREADLIGHT_DOM_PRUNE_CLASS,
   THREADLIGHT_HIDDEN_TURN_CLASS
 } from "../shared/constants";
-import type { ThreadLightSettingsV1 } from "../shared/types";
+import type {
+  ThreadLightDiagnosticEventName,
+  ThreadLightDiagnosticReason,
+  ThreadLightDiagnosticState,
+  ThreadLightSettingsV1
+} from "../shared/types";
 import { CHATGPT_TURN_SELECTOR, mainScope } from "./dom-selectors";
 
 const STYLE_ID = "threadlight-dom-prune-style";
@@ -32,9 +37,18 @@ export interface DomPruneStats {
 }
 
 type DomPruneListener = (stats: DomPruneStats) => void;
+export interface DomPruneDiagnostic {
+  event: ThreadLightDiagnosticEventName;
+  state: ThreadLightDiagnosticState;
+  reason: ThreadLightDiagnosticReason;
+  stats?: DomPruneStats;
+}
+
+type DomPruneDiagnosticListener = (diagnostic: DomPruneDiagnostic) => void;
 
 let activeSettings: ThreadLightSettingsV1 | undefined;
 let pruneListener: DomPruneListener | undefined;
+let diagnosticListener: DomPruneDiagnosticListener | undefined;
 let scrollListenerAttached = false;
 let isScrolling = false;
 let scrollIdleHandle: number | undefined;
@@ -190,6 +204,10 @@ function reportStats(roles: readonly (string | undefined)[], keepLastTurns: numb
   pruneListener?.(domPruneStats(roles, keepLastTurns));
 }
 
+function reportDiagnostic(diagnostic: DomPruneDiagnostic): void {
+  diagnosticListener?.(diagnostic);
+}
+
 // Busy while the user is scrolling or the conversation is still mutating (a reply streaming in).
 function isBusy(): boolean {
   return isScrolling || Date.now() - lastMutationAt < MUTATION_IDLE_MS;
@@ -210,6 +228,11 @@ function applyTurnPruning(keepLastTurns: number): boolean {
 
   if (turns.length === 0) {
     reportStats([], keepLastTurns);
+    reportDiagnostic({
+      event: "dom-prune-skipped",
+      state: "skipped",
+      reason: "no-turns"
+    });
     return false;
   }
 
@@ -222,6 +245,12 @@ function applyTurnPruning(keepLastTurns: number): boolean {
       clearHiddenTurns();
     }
     reportStats(roles, keepLastTurns);
+    reportDiagnostic({
+      event: "dom-prune-skipped",
+      state: "skipped",
+      reason: "below-dom-threshold",
+      stats: domPruneStats(roles, keepLastTurns)
+    });
     return false;
   }
 
@@ -232,6 +261,12 @@ function applyTurnPruning(keepLastTurns: number): boolean {
   if (signature === lastSignature && alreadyPruning) {
     // Nothing visible would change; skip DOM writes so we never disturb scrolling.
     reportStats(roles, keepLastTurns);
+    reportDiagnostic({
+      event: "dom-prune-skipped",
+      state: "skipped",
+      reason: "signature-unchanged",
+      stats: domPruneStats(roles, keepLastTurns)
+    });
     return true;
   }
 
@@ -259,6 +294,12 @@ function applyTurnPruning(keepLastTurns: number): boolean {
 
   lastSignature = signature;
   reportStats(roles, keepLastTurns);
+  reportDiagnostic({
+    event: "dom-prune-applied",
+    state: "applied",
+    reason: "trimmed",
+    stats: domPruneStats(roles, keepLastTurns)
+  });
   return true;
 }
 
@@ -269,6 +310,11 @@ function pruneNow(): boolean {
   // Defer while the page is busy (scrolling or a reply streaming in) and retry once it goes quiet.
   // Bailing here also avoids the turnElements() query on every scroll/mutation during generation.
   if (isBusy()) {
+    reportDiagnostic({
+      event: "dom-prune-deferred",
+      state: "deferred",
+      reason: isScrolling ? "scrolling" : "mutating"
+    });
     scheduleQuietRetry();
     return document.documentElement.classList.contains(THREADLIGHT_DOM_PRUNE_CLASS);
   }
@@ -277,6 +323,11 @@ function pruneNow(): boolean {
 
 function scheduleDelayedPrunes(): void {
   clearScheduledPrunes();
+  reportDiagnostic({
+    event: "dom-prune-scheduled",
+    state: "pending",
+    reason: "unknown"
+  });
   pruneHandles = DELAYED_PRUNE_MS.map((delay) => {
     const handle = window.setTimeout(() => {
       pruneHandles = pruneHandles.filter((storedHandle) => storedHandle !== handle);
@@ -357,9 +408,16 @@ function detachMutationObserver(): void {
   observedScope = undefined;
 }
 
-export function setDomPruning(settings: ThreadLightSettingsV1, onPrune?: DomPruneListener): void {
+export function setDomPruning(
+  settings: ThreadLightSettingsV1,
+  onPrune?: DomPruneListener,
+  onDiagnostic?: DomPruneDiagnosticListener
+): void {
   if (onPrune) {
     pruneListener = onPrune;
+  }
+  if (onDiagnostic) {
+    diagnosticListener = onDiagnostic;
   }
   activeSettings = settings;
   clearScheduledPrunes();
@@ -369,6 +427,11 @@ export function setDomPruning(settings: ThreadLightSettingsV1, onPrune?: DomPrun
     detachMutationObserver();
     clearHiddenTurns();
     reportStats([], settings.keepLastTurns);
+    reportDiagnostic({
+      event: "dom-prune-skipped",
+      state: "disabled",
+      reason: "disabled"
+    });
     return;
   }
 

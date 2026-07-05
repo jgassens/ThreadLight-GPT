@@ -1,6 +1,10 @@
 import {
+  THREADLIGHT_CLEAR_DIAGNOSTICS_MESSAGE,
+  THREADLIGHT_GET_DIAGNOSTICS_MESSAGE,
   THREADLIGHT_GET_SETTINGS_MESSAGE,
   THREADLIGHT_RESTORE_MESSAGE,
+  THREADLIGHT_TAB_CLEAR_DIAGNOSTICS_MESSAGE,
+  THREADLIGHT_TAB_GET_DIAGNOSTICS_MESSAGE,
   THREADLIGHT_UPDATE_SETTINGS_MESSAGE
 } from "../shared/constants";
 import {
@@ -8,6 +12,7 @@ import {
   getActiveChatGptTabId,
   getSettings,
   reloadTab,
+  sendTabMessage,
   updateSettings
 } from "../shared/storage";
 import { isRecord } from "../shared/settings";
@@ -20,7 +25,9 @@ function isRuntimeMessage(value: unknown): value is ThreadLightRuntimeMessage {
 
   if (
     value.type === THREADLIGHT_RESTORE_MESSAGE ||
-    value.type === THREADLIGHT_GET_SETTINGS_MESSAGE
+    value.type === THREADLIGHT_GET_SETTINGS_MESSAGE ||
+    value.type === THREADLIGHT_GET_DIAGNOSTICS_MESSAGE ||
+    value.type === THREADLIGHT_CLEAR_DIAGNOSTICS_MESSAGE
   ) {
     return true;
   }
@@ -40,6 +47,26 @@ addRuntimeMessageListener((message, _sender, sendResponse) => {
         response = { ok: true, settings: await getSettings() };
       } else if (message.type === THREADLIGHT_UPDATE_SETTINGS_MESSAGE) {
         response = { ok: true, settings: await updateSettings(message.patch) };
+      } else if (
+        message.type === THREADLIGHT_GET_DIAGNOSTICS_MESSAGE ||
+        message.type === THREADLIGHT_CLEAR_DIAGNOSTICS_MESSAGE
+      ) {
+        const tabId = await getActiveChatGptTabId();
+        if (tabId === undefined) {
+          response = {
+            ok: false,
+            reason: "chatgpt-tab-not-active",
+            diagnosticsState: "no-active-chatgpt-tab"
+          };
+          sendResponse(response);
+          return;
+        }
+        response = await sendTabMessage(tabId, {
+          type:
+            message.type === THREADLIGHT_GET_DIAGNOSTICS_MESSAGE
+              ? THREADLIGHT_TAB_GET_DIAGNOSTICS_MESSAGE
+              : THREADLIGHT_TAB_CLEAR_DIAGNOSTICS_MESSAGE
+        });
       } else {
         const tabId = await getActiveChatGptTabId();
         if (tabId === undefined) {

@@ -1,6 +1,6 @@
 {
   "name": "threadlight",
-  "version": "0.1.14",
+  "version": "0.1.16",
   "private": true,
   "type": "module",
   "description": "Local-only Safari WebExtension core for keeping long ChatGPT web threads lighter in Safari.",
@@ -10,12 +10,13 @@
     "build:safari": "node scripts/build-extension.mjs",
     "build:dev": "node scripts/build-extension.mjs --target=safari --dev",
     "check:native": "node scripts/check-native-resources.mjs",
+    "generate:app-icons": "node scripts/generate-native-app-icons.mjs",
     "sync:native": "node scripts/sync-native-resources.mjs",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "package:safari:zip": "node scripts/package-safari.mjs",
     "typecheck": "tsc --noEmit",
-    "lint": "eslint .",
+    "lint": "eslint extension tests scripts vitest.config.ts eslint.config.js --no-error-on-unmatched-pattern",
     "test": "vitest run",
     "verify": "npm run typecheck && npm run lint && npm run test && npm run build:safari && npm run check:native"
   },
