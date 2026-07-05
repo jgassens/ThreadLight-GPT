@@ -127,6 +127,14 @@ The debug launcher does this automatically with `xattr -cr` before invoking Xcod
 
 Current local result:
 
+- 2026-07-05: `ThreadLight (macOS)` archives with Xcode 26.6 as version `0.1.17`, build `17`, universal `x86_64 arm64`.
+- 2026-07-05: the archive path was `/private/tmp/threadlight-release-0.1.17-17-20260705T185234Z/ThreadLight.xcarchive`.
+- 2026-07-05: Developer ID export succeeded at `/private/tmp/threadlight-release-0.1.17-17-20260705T185234Z/export/ThreadLight.app`.
+- 2026-07-05: `codesign --verify --deep --strict --verbose=4 /private/tmp/threadlight-release-0.1.17-17-20260705T185234Z/export/ThreadLight.app` passes when run with keychain access.
+- 2026-07-05: The exported app was stapled and accepted by Gatekeeper as `Notarized Developer ID`.
+- 2026-07-05: `dev/builds/release/0.1.17-17-20260705T185234Z/ThreadLight-0.1.17-17-notarized.dmg` was accepted by Apple notarization, stapled, validated, accepted by Gatekeeper as `Notarized Developer ID`, and verified by `hdiutil verify`.
+- 2026-07-05: Notary submission `359eae17-1574-4db6-a852-73fefae94950` returned `Accepted`; the stapled DMG SHA-256 is `f5743e1b404af5a9d7bdc4b2387311e12f6e8916b687f19f16c6135cac9d408b`.
+- 2026-07-05: `/Applications/ThreadLight.app` was updated to version `0.1.17`, build `17`; stale PlugInKit registration for `0.1.16` was removed; `npm run check:safari-registration -- --expected-app /Applications/ThreadLight.app` confirmed the live extension bundle points at `/Applications` and contains all manifest icon resources.
 - 2026-07-05: `ThreadLight (macOS)` archives with Xcode 26.6 as version `0.1.16`, build `16`, universal `x86_64 arm64`.
 - 2026-07-05: the archive path was `/private/tmp/threadlight-release-0.1.16-16-20260705T181005Z/ThreadLight.xcarchive`.
 - 2026-07-05: Developer ID export succeeded at `/private/tmp/threadlight-release-0.1.16-16-20260705T181005Z/export/ThreadLight.app`.

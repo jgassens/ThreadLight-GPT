@@ -57,6 +57,16 @@ Do not commit credentials, key IDs, private keys, or exported signing material.
 
 Current local status:
 
+- 2026-07-05: `npm run verify` passes for version `0.1.17`, build `17`.
+- 2026-07-05: `npm run package:safari:zip` passes and produces `packages/threadlight-extension.zip`.
+- 2026-07-05: Xcode 26.6 archives `ThreadLight (macOS)` as version `0.1.17`, build `17`, universal `x86_64 arm64`.
+- 2026-07-05: Developer ID export succeeds at `/private/tmp/threadlight-release-0.1.17-17-20260705T185234Z/export/ThreadLight.app`.
+- 2026-07-05: The exported app and stapled app pass `codesign --verify --deep --strict --verbose=4`; `spctl -a -t exec -vv /private/tmp/threadlight-release-0.1.17-17-20260705T185234Z/export/ThreadLight.app` accepts it as `Notarized Developer ID`.
+- 2026-07-05: `dev/builds/release/0.1.17-17-20260705T185234Z/ThreadLight-0.1.17-17-notarized.dmg` is signed, notarized, stapled, Gatekeeper-accepted as `Notarized Developer ID`, and `hdiutil verify` passes.
+- 2026-07-05: Notary submission `359eae17-1574-4db6-a852-73fefae94950` returned `Accepted`.
+- 2026-07-05: The stapled DMG SHA-256 is `f5743e1b404af5a9d7bdc4b2387311e12f6e8916b687f19f16c6135cac9d408b`.
+- 2026-07-05: `/Applications/ThreadLight.app` was updated to version `0.1.17`, build `17`; stale PlugInKit registration for `0.1.16` was removed; `npm run check:safari-registration -- --expected-app /Applications/ThreadLight.app` passes; macOS reports ThreadLight is running.
+- 2026-07-05: The installed Safari extension manifest icons still report `hasAlpha: yes` for `icon-32.png` and `icon-128.png`.
 - 2026-07-05: `npm run verify` passes for version `0.1.16`, build `16`.
 - 2026-07-05: `npm run package:safari:zip` passes and produces `packages/threadlight-extension.zip`.
 - 2026-07-05: Xcode 26.6 archives `ThreadLight (macOS)` as version `0.1.16`, build `16`, universal `x86_64 arm64`.
