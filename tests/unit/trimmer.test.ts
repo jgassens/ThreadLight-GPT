@@ -46,6 +46,30 @@ describe("trimmer", () => {
     ]);
   });
 
+  it("does not trim while a reply is still streaming below the current node", () => {
+    const fixture = createLinearConversation(tenTurnRoles);
+    const leaf = fixture.mapping["node-9"];
+    expect(leaf).toBeDefined();
+    if (!leaf) {
+      return;
+    }
+    // An in-flight reply hangs under the active leaf: current_node gains a streaming child.
+    fixture.mapping["streaming"] = {
+      id: "streaming",
+      parent: "node-9",
+      children: [],
+      message: { author: { role: "assistant" }, content: { parts: [""] } }
+    };
+    leaf.children.push("streaming");
+
+    const result = trimConversationData(fixture, 5);
+
+    expect(result.kind).toBe("noop");
+    if (result.kind === "noop") {
+      expect(result.reason).toBe("streaming-branch");
+    }
+  });
+
   it("no-ops when too few turns would be removed to justify rewriting the page model", () => {
     const fixture = createLinearConversation([
       "user",

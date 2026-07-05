@@ -13,7 +13,7 @@ import {
 } from "../shared/events";
 import type { ThreadLightSettingsV1, ThreadLightStatusEventDetail } from "../shared/types";
 import { effectiveKeepLastTurns, isRecord } from "../shared/settings";
-import { getSettings, subscribeSettingsChanges, updateSettings } from "../shared/storage";
+import { getExtensionVersion, getSettings, subscribeSettingsChanges, updateSettings } from "../shared/storage";
 import { CHATGPT_MAIN_SELECTOR } from "./dom-selectors";
 import { setDomPruning, type DomPruneStats } from "./dom-pruner";
 import { updateStatusPill } from "./status-pill";
@@ -208,6 +208,9 @@ function handleWindowMessage(event: MessageEvent): void {
 
 async function initContent(): Promise<void> {
   ensureContentStyles();
+  // Expose the live extension version on the DOM so it can be verified from the page (diagnostic
+  // for Safari's extension caching, which can otherwise silently keep serving an older build).
+  document.documentElement.dataset.threadlightVersion = getExtensionVersion();
   window.addEventListener(THREADLIGHT_STATUS_EVENT, handleStatusEvent);
   window.addEventListener(THREADLIGHT_REQUEST_CONFIG_EVENT, handleConfigRequest);
   window.addEventListener(THREADLIGHT_NAVIGATION_EVENT, handleNavigationEvent);

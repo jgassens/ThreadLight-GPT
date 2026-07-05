@@ -3,12 +3,19 @@ import {
   THREADLIGHT_HIDDEN_TURN_CLASS
 } from "../shared/constants";
 import type { ThreadLightSettingsV1 } from "../shared/types";
-import { CHATGPT_TURN_SELECTOR } from "./dom-selectors";
+import { CHATGPT_TURN_SELECTOR, mainScope } from "./dom-selectors";
 
 const STYLE_ID = "threadlight-dom-prune-style";
 const DELAYED_PRUNE_MS = [400, 1200, 3000] as const;
 // Re-prune this long after scrolling stops, never during an active scroll.
 const SCROLL_IDLE_MS = 200;
+// Treat the conversation as busy while turns are streaming in; only prune once the DOM has
+// been quiet this long. This keeps pruning (and its scroll compensation) out of the way during
+// generation, so we never hide a turn or fight ChatGPT's auto-scroll while a reply is arriving.
+const MUTATION_IDLE_MS = 700;
+// Ignore scroll events this long after our own scrollTop compensation, so the programmatic
+// scroll never re-enters onScroll and schedules a redundant prune pass.
+const SELF_SCROLL_SUPPRESS_MS = 100;
 export const MIN_HIDDEN_TURN_GROUPS_FOR_DOM_PRUNING = 3;
 
 let pruneHandles: number[] = [];
@@ -31,7 +38,13 @@ let pruneListener: DomPruneListener | undefined;
 let scrollListenerAttached = false;
 let isScrolling = false;
 let scrollIdleHandle: number | undefined;
+let quietRetryHandle: number | undefined;
 let lastSignature = "";
+let lastScrollAt = 0;
+let lastMutationAt = 0;
+let suppressScrollUntil = 0;
+let mutationObserver: MutationObserver | undefined;
+let observedScope: Document | Element | undefined;
 
 export function hiddenTurnIndexes(totalTurns: number, keepLastTurns: number): number[] {
   const hiddenCount = Math.max(0, totalTurns - keepLastTurns);
@@ -107,10 +120,14 @@ html.${THREADLIGHT_DOM_PRUNE_CLASS} .${THREADLIGHT_HIDDEN_TURN_CLASS} {
 function clearScheduledPrunes(): void {
   pruneHandles.forEach((handle) => window.clearTimeout(handle));
   pruneHandles = [];
+  if (quietRetryHandle !== undefined) {
+    window.clearTimeout(quietRetryHandle);
+    quietRetryHandle = undefined;
+  }
 }
 
 function turnElements(): HTMLElement[] {
-  return Array.from(document.querySelectorAll<HTMLElement>(CHATGPT_TURN_SELECTOR));
+  return Array.from(mainScope().querySelectorAll<HTMLElement>(CHATGPT_TURN_SELECTOR));
 }
 
 function turnRole(turn: HTMLElement): string | undefined {
@@ -122,10 +139,14 @@ function turnRole(turn: HTMLElement): string | undefined {
   );
 }
 
+function resetPruneCache(): void {
+  lastSignature = "";
+}
+
 function clearHiddenTurns(): void {
   const hadPruningClass = document.documentElement.classList.contains(THREADLIGHT_DOM_PRUNE_CLASS);
   document.documentElement.classList.remove(THREADLIGHT_DOM_PRUNE_CLASS);
-  lastSignature = "";
+  resetPruneCache();
   if (!hadPruningClass) {
     return;
   }
@@ -165,32 +186,52 @@ function viewportAnchor(turns: HTMLElement[]): HTMLElement | undefined {
   return undefined;
 }
 
-function reportStats(turns: HTMLElement[], keepLastTurns: number): void {
-  pruneListener?.(domPruneStats(turns.map(turnRole), keepLastTurns));
+function reportStats(roles: readonly (string | undefined)[], keepLastTurns: number): void {
+  pruneListener?.(domPruneStats(roles, keepLastTurns));
+}
+
+// Busy while the user is scrolling or the conversation is still mutating (a reply streaming in).
+function isBusy(): boolean {
+  return isScrolling || Date.now() - lastMutationAt < MUTATION_IDLE_MS;
+}
+
+function scheduleQuietRetry(): void {
+  if (quietRetryHandle !== undefined) {
+    return;
+  }
+  quietRetryHandle = window.setTimeout(() => {
+    quietRetryHandle = undefined;
+    pruneNow();
+  }, MUTATION_IDLE_MS);
 }
 
 function applyTurnPruning(keepLastTurns: number): boolean {
   const turns = turnElements();
+
   if (turns.length === 0) {
-    pruneListener?.({ totalTurns: 0, keptTurns: 0, hiddenTurns: 0, pruned: false });
+    reportStats([], keepLastTurns);
     return false;
   }
 
-  const hiddenIndexes = new Set(hiddenTurnElementIndexes(turns.map(turnRole), keepLastTurns));
+  const roles = turns.map(turnRole);
+  const hiddenIndexes = new Set(hiddenTurnElementIndexes(roles, keepLastTurns));
   const alreadyPruning = document.documentElement.classList.contains(THREADLIGHT_DOM_PRUNE_CLASS);
 
   if (hiddenIndexes.size === 0) {
     if (alreadyPruning) {
       clearHiddenTurns();
     }
-    reportStats(turns, keepLastTurns);
+    reportStats(roles, keepLastTurns);
     return false;
   }
 
+  // The signature is derived from the live roles, so a change in grouping (e.g. a turn whose
+  // data-turn hydrates after insertion, or recycled nodes) produces a new signature and forces a
+  // fresh pass. It is the sole cache: nothing else is allowed to short-circuit recomputation.
   const signature = `${turns.length}:${keepLastTurns}:${[...hiddenIndexes].join(",")}`;
   if (signature === lastSignature && alreadyPruning) {
     // Nothing visible would change; skip DOM writes so we never disturb scrolling.
-    reportStats(turns, keepLastTurns);
+    reportStats(roles, keepLastTurns);
     return true;
   }
 
@@ -211,18 +252,25 @@ function applyTurnPruning(keepLastTurns: number): boolean {
   if (anchor && !anchor.classList.contains(THREADLIGHT_HIDDEN_TURN_CLASS)) {
     const delta = anchor.getBoundingClientRect().top - anchorTopBefore;
     if (Number.isFinite(delta) && delta !== 0) {
+      suppressScrollUntil = Date.now() + SELF_SCROLL_SUPPRESS_MS;
       scroller.scrollTop += delta;
     }
   }
 
   lastSignature = signature;
-  reportStats(turns, keepLastTurns);
+  reportStats(roles, keepLastTurns);
   return true;
 }
 
 function pruneNow(): boolean {
   if (!activeSettings?.enabled) {
     return false;
+  }
+  // Defer while the page is busy (scrolling or a reply streaming in) and retry once it goes quiet.
+  // Bailing here also avoids the turnElements() query on every scroll/mutation during generation.
+  if (isBusy()) {
+    scheduleQuietRetry();
+    return document.documentElement.classList.contains(THREADLIGHT_DOM_PRUNE_CLASS);
   }
   return applyTurnPruning(activeSettings.keepLastTurns);
 }
@@ -232,25 +280,35 @@ function scheduleDelayedPrunes(): void {
   pruneHandles = DELAYED_PRUNE_MS.map((delay) => {
     const handle = window.setTimeout(() => {
       pruneHandles = pruneHandles.filter((storedHandle) => storedHandle !== handle);
-      // Defer if mid-scroll; the scroll-idle pass will catch up smoothly.
-      if (!isScrolling) {
-        pruneNow();
-      }
+      pruneNow();
     }, delay);
     return handle;
   });
 }
 
 function onScroll(): void {
-  isScrolling = true;
-  if (scrollIdleHandle !== undefined) {
-    window.clearTimeout(scrollIdleHandle);
+  // Ignore the scroll our own scrollTop compensation just triggered.
+  if (Date.now() < suppressScrollUntil) {
+    return;
   }
-  scrollIdleHandle = window.setTimeout(() => {
-    scrollIdleHandle = undefined;
-    isScrolling = false;
-    pruneNow();
-  }, SCROLL_IDLE_MS);
+  isScrolling = true;
+  lastScrollAt = Date.now();
+  if (scrollIdleHandle !== undefined) {
+    return;
+  }
+
+  const check = (): void => {
+    const elapsed = Date.now() - lastScrollAt;
+    if (elapsed >= SCROLL_IDLE_MS) {
+      scrollIdleHandle = undefined;
+      isScrolling = false;
+      pruneNow();
+    } else {
+      scrollIdleHandle = window.setTimeout(check, SCROLL_IDLE_MS - elapsed);
+    }
+  };
+
+  scrollIdleHandle = window.setTimeout(check, SCROLL_IDLE_MS);
 }
 
 function attachScrollListener(): void {
@@ -275,6 +333,30 @@ function detachScrollListener(): void {
   isScrolling = false;
 }
 
+function onMutation(): void {
+  lastMutationAt = Date.now();
+  // Prune shortly after the conversation stops mutating (i.e. the reply finished streaming).
+  scheduleQuietRetry();
+}
+
+function attachMutationObserver(): void {
+  const scope = mainScope();
+  if (mutationObserver && observedScope === scope) {
+    return;
+  }
+  mutationObserver?.disconnect();
+  observedScope = scope;
+  mutationObserver = new MutationObserver(onMutation);
+  // childList/subtree only: attribute writes (our own hidden-turn toggles) must not mark us busy.
+  mutationObserver.observe(scope, { childList: true, subtree: true });
+}
+
+function detachMutationObserver(): void {
+  mutationObserver?.disconnect();
+  mutationObserver = undefined;
+  observedScope = undefined;
+}
+
 export function setDomPruning(settings: ThreadLightSettingsV1, onPrune?: DomPruneListener): void {
   if (onPrune) {
     pruneListener = onPrune;
@@ -284,16 +366,17 @@ export function setDomPruning(settings: ThreadLightSettingsV1, onPrune?: DomPrun
 
   if (!settings.enabled) {
     detachScrollListener();
+    detachMutationObserver();
     clearHiddenTurns();
-    pruneListener?.({ totalTurns: 0, keptTurns: 0, hiddenTurns: 0, pruned: false });
+    reportStats([], settings.keepLastTurns);
     return;
   }
 
   ensureStyles();
   attachScrollListener();
+  attachMutationObserver();
   // keepLastTurns may have changed; force a fresh comparison.
-  lastSignature = "";
-  if (pruneNow()) {
-    scheduleDelayedPrunes();
-  }
+  resetPruneCache();
+  pruneNow();
+  scheduleDelayedPrunes();
 }

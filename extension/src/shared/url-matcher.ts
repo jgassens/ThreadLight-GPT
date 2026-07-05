@@ -71,11 +71,28 @@ export function isChatGptUrl(value: unknown): boolean {
   }
 }
 
+// Cheap substring reject that avoids constructing a URL for the vast majority of
+// requests. Covers string, URL, and Request inputs so every caller shares one fast path.
+export function mightBeConversationRequest(input: RequestInfo | URL): boolean {
+  const href =
+    typeof input === "string"
+      ? input
+      : input instanceof URL
+        ? input.href
+        : input instanceof Request
+          ? input.url
+          : "";
+  return href.includes("backend-api");
+}
+
 export function isConversationJsonRequest(
   input: RequestInfo | URL,
   init?: RequestInit,
   baseUrl?: string
 ): boolean {
+  if (!mightBeConversationRequest(input)) {
+    return false;
+  }
   const url = resolveRequestUrl(input, baseUrl);
   if (!url) {
     return false;

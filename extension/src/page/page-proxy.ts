@@ -3,6 +3,7 @@ import {
   THREADLIGHT_FETCH_PATCHED_FLAG,
   THREADLIGHT_HISTORY_PATCHED_FLAG,
   THREADLIGHT_NAVIGATION_EVENT,
+  THREADLIGHT_PROXY_ACTIVE_DATASET,
   THREADLIGHT_PROXY_READY_MESSAGE,
   THREADLIGHT_REQUEST_CONFIG_EVENT
 } from "../shared/constants";
@@ -27,6 +28,11 @@ interface ResponseRewriteResult {
 type ThreadLightWindow = Window & {
   [THREADLIGHT_FETCH_PATCHED_FLAG]?: boolean;
   [THREADLIGHT_HISTORY_PATCHED_FLAG]?: boolean;
+};
+
+type ExtensionIsolatedGlobal = typeof globalThis & {
+  browser?: { runtime?: { id?: string } };
+  chrome?: { runtime?: { id?: string } };
 };
 
 type ResolveConfigWait = () => void;
@@ -179,8 +185,17 @@ function patchHistoryForNavigationEvents(scopedWindow: ThreadLightWindow): void 
   window.addEventListener("popstate", dispatchSoon);
 }
 
+function isExtensionIsolatedWorld(): boolean {
+  const extGlobal = globalThis as ExtensionIsolatedGlobal;
+  return Boolean(extGlobal.browser?.runtime?.id ?? extGlobal.chrome?.runtime?.id);
+}
+
 export function installThreadLightFetchProxy(): void {
   if (typeof window === "undefined" || typeof window.fetch !== "function") {
+    return;
+  }
+
+  if (isExtensionIsolatedWorld()) {
     return;
   }
 
@@ -189,6 +204,7 @@ export function installThreadLightFetchProxy(): void {
     return;
   }
   scopedWindow[THREADLIGHT_FETCH_PATCHED_FLAG] = true;
+  document.documentElement.dataset[THREADLIGHT_PROXY_ACTIVE_DATASET] = "true";
 
   let settings = readSettingsFromPage();
   let configReceived = false;
@@ -217,11 +233,14 @@ export function installThreadLightFetchProxy(): void {
       return nativeFetch(input, init);
     }
 
+    const responsePromise = nativeFetch(input, init);
+    responsePromise.catch(() => {});
+
     if (!configReceived) {
       await initialConfigWait;
     }
 
-    const response = await nativeFetch(input, init);
+    const response = await responsePromise;
 
     if (settings.suspendOnceForFullReload) {
       settings = skipOnce(settings);

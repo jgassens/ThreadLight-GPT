@@ -172,6 +172,14 @@ export function trimConversationData(data: unknown, keepLastTurnsInput: number):
   const { totalVisibleTurns, turnById } = indexVisibleTurns(path);
   const noopStats = makeStats(totalVisibleTurns, totalVisibleTurns, path.length, path.length);
 
+  // A continuation streaming below the active leaf (current_node has children) means a reply or
+  // thinking node hangs under it. Trimming rebuilds the leaf with children:[] and would sever that
+  // live branch, blanking the in-progress response, so leave the tree untouched until it settles.
+  const currentNode = mapping[currentNodeId];
+  if (isRecord(currentNode) && Array.isArray(currentNode.children) && currentNode.children.length > 0) {
+    return { kind: "noop", data, stats: noopStats, reason: "streaming-branch" };
+  }
+
   if (totalVisibleTurns <= keepLastTurns) {
     return { kind: "noop", data, stats: noopStats, reason: "within-limit" };
   }

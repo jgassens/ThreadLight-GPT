@@ -32,7 +32,8 @@ function installDomGlobals(): Map<string, Listener[]> {
     createElement: vi.fn(() => ({ id: "", textContent: "" })),
     documentElement: {
       append: vi.fn(),
-      classList
+      classList,
+      dataset: {}
     },
     getElementById: vi.fn(() => null)
   });
@@ -87,7 +88,8 @@ describe("content restore flow", () => {
         storageListener = listener;
         return vi.fn();
       }),
-      updateSettings
+      updateSettings,
+      getExtensionVersion: vi.fn(() => "0.1.13")
     }));
     vi.doMock("../../extension/src/content/dom-pruner", () => ({ setDomPruning }));
     vi.doMock("../../extension/src/content/status-pill", () => ({ updateStatusPill: vi.fn() }));

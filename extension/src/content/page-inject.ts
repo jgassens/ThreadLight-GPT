@@ -1,4 +1,4 @@
-import { THREADLIGHT_REQUEST_CONFIG_EVENT } from "../shared/constants";
+import { THREADLIGHT_PROXY_ACTIVE_DATASET, THREADLIGHT_REQUEST_CONFIG_EVENT } from "../shared/constants";
 import { dispatchSettingsForPage, writeSettingsForPage } from "../shared/events";
 import { getRuntimeUrl, getSettings, subscribeSettingsChanges } from "../shared/storage";
 import type { ThreadLightSettingsV1 } from "../shared/types";
@@ -7,6 +7,9 @@ const PAGE_PROXY_MARKER = "threadlightProxyInjected";
 
 function injectPageProxy(): void {
   const root = document.documentElement;
+  if (root.dataset[THREADLIGHT_PROXY_ACTIVE_DATASET] === "true") {
+    return;
+  }
   if (root.dataset[PAGE_PROXY_MARKER] === "true") {
     return;
   }

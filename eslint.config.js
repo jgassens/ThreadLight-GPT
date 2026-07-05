@@ -28,6 +28,7 @@ export default [
   {
     ignores: [
       "coverage/**",
+      "dev/**",
       "extension/dist/**",
       "extension/manifest.json",
       "native/**",

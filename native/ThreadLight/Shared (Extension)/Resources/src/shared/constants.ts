@@ -7,6 +7,8 @@ export const THREADLIGHT_STATUS_EVENT = "threadlight-status";
 export const THREADLIGHT_NAVIGATION_EVENT = "threadlight-navigation";
 export const THREADLIGHT_FETCH_PATCHED_FLAG = "__threadlightFetchPatched";
 export const THREADLIGHT_HISTORY_PATCHED_FLAG = "__threadlightHistoryPatched";
+// dataset key on <html> the page proxy sets once installed; page-inject reads it to skip its fallback.
+export const THREADLIGHT_PROXY_ACTIVE_DATASET = "threadlightProxyActive";
 export const THREADLIGHT_STATUS_PILL_ID = "threadlight-status-pill";
 export const THREADLIGHT_ULTRA_LEAN_CLASS = "threadlight-ultra-lean";
 export const THREADLIGHT_COLLAPSE_CLASS = "threadlight-collapse-long-users";

@@ -4,7 +4,11 @@ import {
   THREADLIGHT_LONG_USER_EXPANDED_CLASS,
   THREADLIGHT_LONG_USER_THRESHOLD
 } from "../shared/constants";
-import { CHATGPT_MESSAGE_SELECTOR, CHATGPT_USER_MESSAGE_SELECTOR } from "./dom-selectors";
+import {
+  CHATGPT_MESSAGE_SELECTOR,
+  CHATGPT_USER_MESSAGE_SELECTOR,
+  mainScope
+} from "./dom-selectors";
 
 const STYLE_ID = "threadlight-user-collapse-style";
 const EXPAND_BUTTON_CLASS = "threadlight-expand-user-message";
@@ -77,7 +81,8 @@ function collapseElement(element: Element): void {
 }
 
 function scanForLongMessages(): void {
-  document.querySelectorAll(targetSelector).forEach(collapseElement);
+  const scope = mainScope();
+  scope.querySelectorAll(targetSelector).forEach(collapseElement);
 }
 
 // Undo every collapse so the next scan can re-evaluate (used on disable and mode switch).
@@ -127,6 +132,11 @@ export function setUserCollapseEnabled(enabled: boolean, allRoles = false): void
 
   if (!observer) {
     observer = new MutationObserver(scheduleScan);
-    observer.observe(document.documentElement, { childList: true, subtree: true });
+    // Observe a stable root so the observer survives ChatGPT remounting <main> on navigation;
+    // the scan itself stays scoped to the conversation via mainScope().
+    observer.observe(document.documentElement, {
+      childList: true,
+      subtree: true
+    });
   }
 }
