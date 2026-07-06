@@ -9,3 +9,12 @@ export const CHATGPT_MESSAGE_SELECTOR = "[data-message-author-role]";
 export function mainScope(): Document | HTMLElement {
   return document.querySelector<HTMLElement>(CHATGPT_MAIN_SELECTOR) ?? document;
 }
+
+// The turn container: the parent of the rendered conversation turns. Scope MutationObservers to
+// this rather than <main>, because ChatGPT's composer is a sibling inside <main> and observing its
+// subtree makes every keystroke's editor mutations tax typing. Falls back to mainScope() until
+// turns are rendered.
+export function conversationScope(): Document | HTMLElement {
+  const firstTurn = document.querySelector<HTMLElement>(CHATGPT_TURN_SELECTOR);
+  return firstTurn?.parentElement ?? mainScope();
+}

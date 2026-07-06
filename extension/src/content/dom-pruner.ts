@@ -8,7 +8,7 @@ import type {
   ThreadLightDiagnosticState,
   ThreadLightSettingsV1
 } from "../shared/types";
-import { CHATGPT_TURN_SELECTOR, mainScope } from "./dom-selectors";
+import { CHATGPT_TURN_SELECTOR, conversationScope } from "./dom-selectors";
 
 const STYLE_ID = "threadlight-dom-prune-style";
 const DELAYED_PRUNE_MS = [400, 1200, 3000] as const;
@@ -141,7 +141,7 @@ function clearScheduledPrunes(): void {
 }
 
 function turnElements(): HTMLElement[] {
-  return Array.from(mainScope().querySelectorAll<HTMLElement>(CHATGPT_TURN_SELECTOR));
+  return Array.from(conversationScope().querySelectorAll<HTMLElement>(CHATGPT_TURN_SELECTOR));
 }
 
 function turnRole(turn: HTMLElement): string | undefined {
@@ -235,6 +235,10 @@ function applyTurnPruning(keepLastTurns: number): boolean {
     });
     return false;
   }
+
+  // Turns are rendered now, so re-scope the busy-gate observer from the initial <main> fallback to
+  // the (composer-free) turn container. Idempotent once the target is stable.
+  attachMutationObserver();
 
   const roles = turns.map(turnRole);
   const hiddenIndexes = new Set(hiddenTurnElementIndexes(roles, keepLastTurns));
@@ -391,7 +395,10 @@ function onMutation(): void {
 }
 
 function attachMutationObserver(): void {
-  const scope = mainScope();
+  // Scope to the turn container, not <main>: the composer is a sibling inside <main>, and watching
+  // its subtree makes every keystroke's editor mutations tax typing (measured ~26fps). The turn
+  // container still surfaces new turns and streaming replies, which is all the busy-gate needs.
+  const scope = conversationScope();
   if (mutationObserver && observedScope === scope) {
     return;
   }

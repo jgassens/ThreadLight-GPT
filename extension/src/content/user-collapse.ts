@@ -7,6 +7,7 @@ import {
 import {
   CHATGPT_MESSAGE_SELECTOR,
   CHATGPT_USER_MESSAGE_SELECTOR,
+  conversationScope,
   mainScope
 } from "./dom-selectors";
 
@@ -15,6 +16,7 @@ const EXPAND_BUTTON_CLASS = "threadlight-expand-user-message";
 
 let processed = new WeakSet<Element>();
 let observer: MutationObserver | undefined;
+let observedTarget: Document | Element | undefined;
 let debounceHandle: number | undefined;
 // Which messages to collapse: user-only (the popup toggle) or every role (ultra lean).
 let targetSelector = CHATGPT_USER_MESSAGE_SELECTOR;
@@ -81,8 +83,23 @@ function collapseElement(element: Element): void {
 }
 
 function scanForLongMessages(): void {
+  ensureCollapseObserver();
   const scope = mainScope();
   scope.querySelectorAll(targetSelector).forEach(collapseElement);
+}
+
+// Bind the scan-triggering observer to the turn container. ChatGPT's composer is a sibling inside
+// <main>, so scoping here (instead of <main>/<html>) keeps every keystroke's editor mutations from
+// waking this observer. Rebinds when the container changes (e.g. ChatGPT swaps it on navigation).
+function ensureCollapseObserver(): void {
+  const target = conversationScope();
+  if (observer && observedTarget === target) {
+    return;
+  }
+  observer?.disconnect();
+  observedTarget = target;
+  observer = new MutationObserver(scheduleScan);
+  observer.observe(target, { childList: true, subtree: true });
 }
 
 // Undo every collapse so the next scan can re-evaluate (used on disable and mode switch).
@@ -115,6 +132,7 @@ export function setUserCollapseEnabled(enabled: boolean, allRoles = false): void
   if (!enabled) {
     observer?.disconnect();
     observer = undefined;
+    observedTarget = undefined;
     if (debounceHandle !== undefined) {
       window.clearTimeout(debounceHandle);
       debounceHandle = undefined;
@@ -129,14 +147,4 @@ export function setUserCollapseEnabled(enabled: boolean, allRoles = false): void
 
   ensureStyles();
   scanForLongMessages();
-
-  if (!observer) {
-    observer = new MutationObserver(scheduleScan);
-    // Observe a stable root so the observer survives ChatGPT remounting <main> on navigation;
-    // the scan itself stays scoped to the conversation via mainScope().
-    observer.observe(document.documentElement, {
-      childList: true,
-      subtree: true
-    });
-  }
 }

@@ -1,6 +1,6 @@
 {
   "name": "threadlight",
-  "version": "0.1.17",
+  "version": "0.1.18",
   "private": true,
   "type": "module",
   "description": "Local-only Safari WebExtension core for keeping long ChatGPT web threads lighter in Safari.",
